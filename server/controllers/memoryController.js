@@ -157,11 +157,12 @@ const deleteMemory = async (req, res, next) => {
     const isOwner = memory.uploader.toString() === req.user._id.toString();
     if (!isOwner && req.user.role !== 'admin') return error(res, 403, 'Not authorized to delete this memory.');
 
-    try {
+    // Try to delete from Google Drive first. 
+    // If this fails, the error will be passed to the catch block and the database record will NOT be deleted.
+    if (memory.googleDriveFileId) {
       await driveService.deleteFile(memory.googleDriveFileId);
-    } catch (driveErr) {
-      console.warn('Drive delete failed (file may already be gone):', driveErr.message);
     }
+    
     await memory.deleteOne();
 
     return success(res, 200, 'Memory deleted.');

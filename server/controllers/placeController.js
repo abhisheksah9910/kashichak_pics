@@ -427,7 +427,7 @@ const deletePlace = async (
 ) => {
   try {
     const place =
-      await Place.findByIdAndDelete(
+      await Place.findById(
         req.params.id
       );
 
@@ -438,6 +438,27 @@ const deletePlace = async (
         'Place not found.'
       );
     }
+    
+    // Find all memories associated with this place
+    const memories = await Memory.find({ place: place._id });
+    
+    // Delete all associated files from Google Drive
+    const driveService = require('../services/googleDriveService');
+    for (const memory of memories) {
+      if (memory.googleDriveFileId) {
+        try {
+          await driveService.deleteFile(memory.googleDriveFileId);
+        } catch (driveErr) {
+          console.warn(`Failed to delete file ${memory.googleDriveFileId} from Drive:`, driveErr.message);
+        }
+      }
+    }
+    
+    // Delete all memories from database
+    await Memory.deleteMany({ place: place._id });
+    
+    // Delete the place
+    await place.deleteOne();
 
     return success(
       res,
