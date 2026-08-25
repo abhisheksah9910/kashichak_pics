@@ -55,18 +55,18 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
 
     return (
         /* Full screen overlay */
-        <div className="fixed inset-0 z-50 bg-black/95 flex items-end md:items-center md:justify-center md:p-4" onClick={onClose}>
+        <div className="fixed inset-0 z-[100] bg-black/95 flex items-end md:items-center md:justify-center md:p-4" onClick={onClose}>
 
             {/* Close */}
-            <button onClick={onClose} className="absolute right-4 top-4 z-50 text-white/80 hover:text-white" aria-label="Close">
+            <button onClick={onClose} className="absolute right-4 top-4 z-[110] text-white/80 hover:text-white" aria-label="Close">
                 <X className="h-7 w-7" />
             </button>
 
             {/* Desktop prev/next arrows */}
-            <button onClick={(e) => { e.stopPropagation(); onPrev(); }} className="absolute left-2 top-1/2 -translate-y-1/2 z-50 hidden md:block text-white/70 hover:text-white">
+            <button onClick={(e) => { e.stopPropagation(); onPrev(); }} className="absolute left-2 top-1/2 -translate-y-1/2 z-[110] hidden md:block text-white/70 hover:text-white">
                 <ChevronLeft className="h-10 w-10" />
             </button>
-            <button onClick={(e) => { e.stopPropagation(); onNext(); }} className="absolute right-2 top-1/2 -translate-y-1/2 z-50 hidden md:block text-white/70 hover:text-white">
+            <button onClick={(e) => { e.stopPropagation(); onNext(); }} className="absolute right-2 top-1/2 -translate-y-1/2 z-[110] hidden md:block text-white/70 hover:text-white">
                 <ChevronRight className="h-10 w-10" />
             </button>
 
