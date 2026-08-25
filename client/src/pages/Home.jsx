@@ -151,7 +151,20 @@ export default function Home() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <h2 className="mb-8 font-display text-2xl font-semibold sm:text-3xl">Featured Memory</h2>
             <div className="grid gap-8 overflow-hidden rounded-3xl bg-white dark:bg-ink-950 shadow-soft md:grid-cols-2">
-              <img src={featured.mediaUrl} alt={featured.caption} className="h-72 w-full object-cover md:h-full" />
+              {featured.mediaType === 'video' ? (
+                <div className="relative h-72 w-full md:h-full cursor-pointer group" onClick={() => navigate(`/places/${featured.place?.slug}`)}>
+                  <video src={featured.mediaUrl} className="h-full w-full object-cover" autoPlay muted loop playsInline />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                    <div className="h-14 w-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 ml-1">
+                        <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <img src={featured.mediaUrl} alt={featured.caption} className="h-72 w-full object-cover md:h-full cursor-pointer" onClick={() => navigate(`/places/${featured.place?.slug}`)} />
+              )}
               <div className="flex flex-col justify-center p-8">
                 <p className="text-xs font-medium uppercase tracking-wide text-terracotta-600">
                   {featured.place?.name}
