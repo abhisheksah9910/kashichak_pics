@@ -62,67 +62,67 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section 
-        className="relative overflow-hidden bg-black text-white"
-        style={{
-          backgroundImage: "url('/old-station.jpg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-white dark:to-ink-950"></div>
-        <div className="relative mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 z-10">
-          <h1 className="font-display text-4xl font-semibold leading-tight sm:text-6xl drop-shadow-lg">
+      <section className="relative overflow-hidden bg-gradient-to-b from-terracotta-50 to-white dark:from-ink-950 dark:to-ink-950">
+        <div className="mx-auto max-w-5xl px-4 py-20 text-center sm:px-6">
+          <h1 className="font-display text-4xl font-semibold leading-tight sm:text-6xl">
             Every Place Has a Story.
             <br />
-            <span className="text-terracotta-300">हर जगह की एक कहानी है।</span>
+            <span className="text-terracotta-600 dark:text-terracotta-400">हर जगह की एक कहानी है।</span>
           </h1>
-          
-          <div className="mx-auto mt-8 max-w-2xl p-5 sm:p-6 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl">
-            <p className="text-base sm:text-xl italic text-white/95 font-medium leading-relaxed">
-              "गाँव की वो गलियाँ, वो पुराना स्टेशन...<br/>
-              वक्त बदल गया, पर यादें आज भी वहीं खड़ी हैं।"
-            </p>
-          </div>
-
-          <p className="mx-auto mt-8 max-w-2xl text-sm text-white/80 sm:text-base drop-shadow-md">
-            Apna Kashichak is a community archive where we preserve photos and videos of the places we call home.
+          <p className="mx-auto mt-6 max-w-2xl text-base text-ink-950/70 dark:text-terracotta-50/70 sm:text-lg">
+            Apna Kashichak is a community archive where we preserve photos and videos of the places we call home. <br className="hidden sm:block" /> 
+            <span className="mt-1 block text-sm font-medium">यह हमारा अपना काशीचक है, जहाँ हम अपनी पुरानी यादें संजोते हैं।</span>
           </p>
-          
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link to="/explore" className="btn-primary bg-white text-ink-950 hover:bg-white/90 border-transparent shadow-xl"><Compass className="h-4 w-4" /> Explore (जगहें खोजें)</Link>
-            <Link to="/upload" className="btn-secondary bg-black/50 text-white hover:bg-black/70 border-white/20 backdrop-blur-md shadow-xl"><UploadCloud className="h-4 w-4" /> Share Memory (यादें साझा करें)</Link>
+            <Link to="/explore" className="btn-primary"><Compass className="h-4 w-4" /> Explore (जगहें खोजें)</Link>
+            <Link to="/upload" className="btn-secondary"><UploadCloud className="h-4 w-4" /> Share Memory (यादें साझा करें)</Link>
           </div>
 
           {/* Search */}
           <div className="relative mx-auto mt-12 max-w-xl">
-            <div className="flex items-center gap-3 rounded-full border border-white/20 bg-black/50 backdrop-blur-md px-5 py-4 shadow-xl">
-              <Search className="h-5 w-5 text-white/70" />
+            <div className="flex items-center gap-3 rounded-full border border-terracotta-200 dark:border-terracotta-800 bg-white dark:bg-ink-950/60 px-5 py-4 shadow-soft">
+              <Search className="h-5 w-5 text-terracotta-400" />
               <input
                 value={query}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search your place (अपनी जगह खोजें)..."
-                className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/60"
+                className="w-full bg-transparent text-sm outline-none placeholder:text-ink-950/40 dark:placeholder:text-terracotta-50/40"
               />
             </div>
             {suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-2xl border border-white/20 bg-black/80 backdrop-blur-lg text-left shadow-2xl">
+              <div className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-2xl border border-terracotta-100 dark:border-terracotta-900/50 bg-white dark:bg-ink-950 text-left shadow-soft">
                 {suggestions.map((s) => (
                   <button
                     key={s._id}
                     onClick={() => goToPlace(s.slug)}
-                    className="flex w-full items-center gap-2 px-5 py-3 text-sm text-white hover:bg-white/10 transition"
+                    className="flex w-full items-center gap-2 px-5 py-3 text-sm hover:bg-terracotta-50 dark:hover:bg-terracotta-900/30"
                   >
                     <MapPin className="h-4 w-4 text-terracotta-400" />
                     <span>{s.name}</span>
-                    <span className="ml-auto text-xs text-white/50">
+                    <span className="ml-auto text-xs text-ink-950/40 dark:text-terracotta-50/40">
                       {[s.area, s.district, s.state].filter(Boolean).join(', ')}
                     </span>
                   </button>
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Nostalgia Section */}
+      <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 mb-8">
+        <div className="flex flex-col items-center">
+          <h2 className="font-display text-3xl font-semibold text-terracotta-800 dark:text-terracotta-400 mb-8">इतिहास के पन्नों से</h2>
+          
+          <div className="bg-white dark:bg-ink-900 p-4 pb-8 sm:p-6 sm:pb-12 rounded-sm shadow-xl rotate-1 hover:rotate-0 transition-transform duration-300 max-w-md w-full border border-gray-100 dark:border-terracotta-900/30">
+            <div className="relative aspect-square w-full overflow-hidden bg-gray-100 dark:bg-ink-950 mb-6 border border-gray-200 dark:border-transparent">
+              <img src="/old-station.jpg" alt="Old Kashichak Station" className="w-full h-full object-cover filter contrast-125 sepia-[0.2]" />
+            </div>
+            <p className="font-serif text-xl sm:text-2xl text-center text-ink-900 dark:text-terracotta-100 leading-relaxed italic">
+              "गाँव की वो गलियाँ, वो पुराना स्टेशन...<br/>
+              वक्त बदल गया, पर यादें आज भी वहीं खड़ी हैं।"
+            </p>
           </div>
         </div>
       </section>
