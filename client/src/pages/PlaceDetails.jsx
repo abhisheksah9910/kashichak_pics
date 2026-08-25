@@ -197,11 +197,23 @@ export default function PlaceDetails() {
                 >
                   <div className="relative">
                     {m.mediaType === 'video' ? (
-                      <div className="relative flex aspect-video w-full items-center justify-center bg-gradient-to-br from-gray-900 to-black">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition duration-300 group-hover:bg-white/30 group-hover:scale-110">
-                          <span className="ml-1 text-2xl text-white">▶</span>
+                      <div className="relative w-full overflow-hidden">
+                        <img
+                          src={m.thumbnailUrl}
+                          alt={m.caption}
+                          loading="lazy"
+                          className="w-full object-cover transition duration-500 group-hover:scale-105"
+                          onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                        />
+                        <div className="hidden aspect-video w-full items-center justify-center bg-gradient-to-br from-gray-900 to-black" style={{display:'none'}}>
+                          <span className="text-4xl text-white opacity-60">▶</span>
                         </div>
-                        <span className="absolute bottom-2 left-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">VIDEO</span>
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition group-hover:bg-black/30">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm transition duration-300 group-hover:scale-110 group-hover:bg-black/70">
+                            <span className="ml-1 text-lg text-white">▶</span>
+                          </div>
+                        </div>
+                        <span className="absolute bottom-2 left-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">Video</span>
                       </div>
                     ) : (
                       <img src={m.thumbnailUrl || m.mediaUrl} alt={m.caption} loading="lazy" className="w-full object-cover transition duration-500 group-hover:scale-105" />

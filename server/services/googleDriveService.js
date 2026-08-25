@@ -120,9 +120,10 @@ async function uploadFile({ buffer, originalName, mimeType }) {
     ? `https://lh3.googleusercontent.com/d/${fileId}`
     : `${serverBase}/api/media/${fileId}`;
 
+  // For videos, use Google Drive's built-in thumbnail API (shows an actual frame from the video)
   const thumbnailUrl = isImage
     ? `https://lh3.googleusercontent.com/d/${fileId}`
-    : `${serverBase}/api/media/${fileId}`;
+    : `https://drive.google.com/thumbnail?id=${fileId}&sz=w640`;
 
   return {
     fileId,
