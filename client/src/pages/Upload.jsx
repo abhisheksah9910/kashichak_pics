@@ -28,7 +28,7 @@ export default function Upload() {
   const fileInputRef = useRef(null);
 
   // Details
-  const [details, setDetails] = useState({ caption: '', story: '', dateCaptured: '', tags: '' });
+  const [details, setDetails] = useState({ caption: '', story: '', dateCaptured: '', tags: '', featuredLabel: '' });
 
   if (!user) {
     return (
@@ -81,6 +81,7 @@ export default function Upload() {
     formData.append('story', details.story);
     formData.append('dateCaptured', details.dateCaptured);
     formData.append('tags', details.tags);
+    if (details.featuredLabel) formData.append('featuredLabel', details.featuredLabel);
 
     try {
       setSubmitting(true);
@@ -213,6 +214,17 @@ export default function Upload() {
             <textarea value={details.story} onChange={(e) => setDetails({ ...details, story: e.target.value })} placeholder="The story behind this memory..." rows={4} className="input" />
             <input type="date" value={details.dateCaptured} onChange={(e) => setDetails({ ...details, dateCaptured: e.target.value })} className="input" max={new Date().toISOString().split('T')[0]} />
             <input value={details.tags} onChange={(e) => setDetails({ ...details, tags: e.target.value })} placeholder="Tags, comma separated (e.g. railway, festival)" className="input" />
+            {user?.role === 'admin' && (
+              <label className="flex items-center gap-2 pt-2 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={details.featuredLabel === 'historical'} 
+                  onChange={(e) => setDetails({...details, featuredLabel: e.target.checked ? 'historical' : ''})} 
+                  className="rounded border-terracotta-300 text-terracotta-600 focus:ring-terracotta-500 h-4 w-4"
+                />
+                <span className="text-sm font-medium text-ink-950 dark:text-terracotta-50">Mark as Historical Photo (Admin only)</span>
+              </label>
+            )}
           </div>
         )}
 

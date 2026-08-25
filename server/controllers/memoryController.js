@@ -5,10 +5,9 @@ const driveService = require('../services/googleDriveService');
 const { success, error } = require('../utils/apiResponse');
 const { ALLOWED_IMAGE_TYPES, MAX_IMAGE_MB, MAX_VIDEO_MB } = require('../middleware/upload');
 
-// GET /api/memories?place=slug&type=photo&year=2020&sort=newest&page=1
 const listMemories = async (req, res, next) => {
   try {
-    const { place, type, year, tag, uploader, sort = 'newest', page = 1, limit = 18 } = req.query;
+    const { place, type, year, tag, uploader, label, sort = 'newest', page = 1, limit = 18 } = req.query;
     const filter = { status: 'approved' };
 
     if (place) {
@@ -19,6 +18,7 @@ const listMemories = async (req, res, next) => {
     if (uploader) filter.uploader = uploader;
     if (type) filter.mediaType = type;
     if (tag) filter.tags = tag.toLowerCase();
+    if (label) filter.featuredLabel = label;
     if (year) {
       filter.dateCaptured = {
         $gte: new Date(`${year}-01-01`),
@@ -84,7 +84,7 @@ const getTimeline = async (req, res, next) => {
 const uploadMemory = async (req, res, next) => {
   try {
     if (!req.file) return error(res, 400, 'A photo or video file is required.');
-    const { placeId, caption, story, dateCaptured, tags } = req.body;
+    const { placeId, caption, story, dateCaptured, tags, featuredLabel } = req.body;
 
     if (!placeId || !caption || !dateCaptured) {
       return error(res, 400, 'placeId, caption and dateCaptured are required.');
@@ -106,6 +106,13 @@ const uploadMemory = async (req, res, next) => {
       mimeType: req.file.mimetype,
     });
 
+    let finalFeaturedLabel = '';
+    if (featuredLabel === 'historical' && req.user.role === 'admin') {
+      finalFeaturedLabel = 'historical';
+    }
+
+    const status = req.user.role === 'admin' ? 'approved' : 'pending';
+
     const memory = await Memory.create({
       uploader: req.user._id,
       place: place._id,
@@ -120,10 +127,18 @@ const uploadMemory = async (req, res, next) => {
       story,
       tags: tags ? tags.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean) : [],
       dateCaptured: new Date(dateCaptured),
-      status: 'pending',
+      status,
+      featuredLabel: finalFeaturedLabel,
     });
 
-    return success(res, 201, 'Memory submitted! It will be visible after admin review.', memory);
+    if (status === 'approved') {
+      const countUpdate = { $inc: { memoryCount: 1 } };
+      if (mediaType === 'photo') countUpdate.$inc.photoCount = 1;
+      if (mediaType === 'video') countUpdate.$inc.videoCount = 1;
+      await Place.findByIdAndUpdate(place._id, countUpdate);
+    }
+
+    return success(res, 201, status === 'approved' ? 'Memory uploaded and approved successfully!' : 'Memory submitted! It will be visible after admin review.', memory);
   } catch (err) {
     next(err);
   }
