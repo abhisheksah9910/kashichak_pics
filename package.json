@@ -1,0 +1,13 @@
+{
+  "name": "apna-kashichak",
+  "version": "1.0.0",
+  "description": "Root package for Render deployment",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "cd server && npm install",
+    "install": "cd server && npm install",
+    "start": "cd server && npm start"
+  }
+}
