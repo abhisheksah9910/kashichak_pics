@@ -196,9 +196,15 @@ export default function PlaceDetails() {
                   className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl border border-terracotta-100 dark:border-terracotta-900/40 text-left shadow-soft"
                 >
                   <div className="relative">
-                    <img src={m.thumbnailUrl || m.mediaUrl} alt={m.caption} loading="lazy" className="w-full object-cover transition duration-500 group-hover:scale-105" />
-                    {m.mediaType === 'video' && (
-                      <span className="absolute right-2 top-2 rounded-full bg-black/60 p-1.5 text-white">▶</span>
+                    {m.mediaType === 'video' ? (
+                      <div className="relative flex aspect-video w-full items-center justify-center bg-gradient-to-br from-gray-900 to-black">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition duration-300 group-hover:bg-white/30 group-hover:scale-110">
+                          <span className="ml-1 text-2xl text-white">▶</span>
+                        </div>
+                        <span className="absolute bottom-2 left-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">VIDEO</span>
+                      </div>
+                    ) : (
+                      <img src={m.thumbnailUrl || m.mediaUrl} alt={m.caption} loading="lazy" className="w-full object-cover transition duration-500 group-hover:scale-105" />
                     )}
                   </div>
                   <div className="p-3">
