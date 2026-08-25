@@ -125,11 +125,13 @@ app.get('/api/health', (req, res) => {
 
 // =========================
 // API ROUTES
-// =========================
-app.use('/api/auth', authRoutes);
+// =========================// API Routes
+app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/places', placeRoutes);
-app.use('/api/memories', memoryRoutes);
+app.use('/api/places', require('./routes/placeRoutes'));
+app.use('/api/memories', require('./routes/memoryRoutes'));
+
+
 app.use('/api/place-suggestions', placeSuggestionRoutes);
 app.use('/api/admin/suggestions', suggestionRoutes);
 app.use('/api/reports', reportRoutes);
