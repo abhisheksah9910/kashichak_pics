@@ -7,10 +7,10 @@ export default function BottomNav() {
   const location = useLocation();
 
   const navItems = [
-    { label: 'Home', path: '/', icon: Home },
-    { label: 'Explore', path: '/explore', icon: Compass },
-    { label: 'Add', path: '/upload', icon: PlusSquare },
-    { label: 'Profile', path: user ? '/profile' : '/login', icon: User },
+    { label: 'Home / होम', path: '/', icon: Home },
+    { label: 'Explore / खोजें', path: '/explore', icon: Compass },
+    { label: 'Add / जोड़ें', path: '/upload', icon: PlusSquare },
+    { label: 'Profile / प्रोफ़ाइल', path: user ? '/profile' : '/login', icon: User },
   ];
 
   return (

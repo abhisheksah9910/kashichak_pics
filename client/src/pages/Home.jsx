@@ -8,10 +8,10 @@ import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
 
 const steps = [
-  { icon: MapPin, title: 'Find your place', text: 'Search for your village, town, or landmark.' },
-  { icon: Camera, title: 'Upload a memory', text: 'Share a photo or video connected to it.' },
-  { icon: PenLine, title: 'Share its story', text: 'Tell us when it was taken and what it means.' },
-  { icon: Archive, title: 'Preserve it forever', text: 'It joins the place\'s living timeline.' },
+  { icon: MapPin, title: 'Find your place (जगह खोजें)', text: 'Search for your village, town, or landmark.' },
+  { icon: Camera, title: 'Upload a memory (फोटो डालें)', text: 'Share a photo or video connected to it.' },
+  { icon: PenLine, title: 'Share its story (कहानी बताएँ)', text: 'Tell us when it was taken and what it means.' },
+  { icon: Archive, title: 'Preserve it forever (हमेशा के लिए संजोएँ)', text: 'It joins the place\'s living timeline.' },
 ];
 
 export default function Home() {
@@ -63,19 +63,19 @@ export default function Home() {
     <div>
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-terracotta-50 to-white dark:from-ink-950 dark:to-ink-950">
-        <div className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6">
+        <div className="mx-auto max-w-5xl px-4 py-20 text-center sm:px-6">
           <h1 className="font-display text-4xl font-semibold leading-tight sm:text-6xl">
             Every Place Has a Story.
             <br />
-            <span className="text-terracotta-600 dark:text-terracotta-400">Every Memory Belongs Somewhere.</span>
+            <span className="text-terracotta-600 dark:text-terracotta-400">हर जगह की एक कहानी है।</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base text-ink-950/70 dark:text-terracotta-50/70 sm:text-lg">
-            Apna Kashichak is a community archive where people preserve photos and videos of the villages,
-            towns, and landmarks they call home — starting with Kashichak and growing across India.
+            Apna Kashichak is a community archive where we preserve photos and videos of the places we call home. <br className="hidden sm:block" /> 
+            <span className="mt-1 block text-sm font-medium">यह हमारा अपना काशीचक है, जहाँ हम अपनी पुरानी यादें संजोते हैं।</span>
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link to="/explore" className="btn-primary"><Compass className="h-4 w-4" /> Explore Places</Link>
-            <Link to="/upload" className="btn-secondary"><UploadCloud className="h-4 w-4" /> Share a Memory</Link>
+            <Link to="/explore" className="btn-primary"><Compass className="h-4 w-4" /> Explore (जगहें खोजें)</Link>
+            <Link to="/upload" className="btn-secondary"><UploadCloud className="h-4 w-4" /> Share Memory (यादें साझा करें)</Link>
           </div>
 
           {/* Search */}
@@ -85,7 +85,7 @@ export default function Home() {
               <input
                 value={query}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                placeholder="Search your place..."
+                placeholder="Search your place (अपनी जगह खोजें)..."
                 className="w-full bg-transparent text-sm outline-none placeholder:text-ink-950/40 dark:placeholder:text-terracotta-50/40"
               />
             </div>
@@ -106,6 +106,24 @@ export default function Home() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Gaon Ki Khabar (Noticeboard) */}
+      <section className="mx-auto max-w-5xl px-4 py-2 sm:px-6 mb-8 mt-2">
+        <div className="flex items-center gap-4 rounded-2xl bg-gradient-to-r from-orange-100 to-amber-50 dark:from-terracotta-900/30 dark:to-orange-900/10 border border-orange-200 dark:border-terracotta-800 p-4 shadow-sm">
+          <div className="shrink-0 rounded-full bg-orange-500 p-2 text-white shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 className="font-display font-semibold text-orange-900 dark:text-orange-200">Gaon Ki Khabar (गाँव की ख़बर)</h3>
+            <p className="mt-1 text-sm text-orange-800 dark:text-orange-300">
+              Welcome to Apna Kashichak! A place to preserve our memories. <br className="hidden sm:block" /> 
+              सभी ग्रामवासियों का 'अपना काशीचक' में स्वागत है। आइए अपनी पुरानी तस्वीरें साझा करें!
+            </p>
           </div>
         </div>
       </section>
