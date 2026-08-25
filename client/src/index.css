@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans text-ink-950 dark:text-terracotta-50 transition-colors duration-300;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-terracotta-600 px-6 py-3 font-medium text-white shadow-soft transition hover:bg-terracotta-700 active:scale-95 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-terracotta-300 bg-white/70 px-6 py-3 font-medium text-terracotta-700 transition hover:bg-terracotta-50 active:scale-95 dark:border-terracotta-800 dark:bg-ink-950/40 dark:text-terracotta-200 dark:hover:bg-terracotta-900/30;
+  }
+
+  .card {
+    @apply rounded-2xl border border-terracotta-100 bg-white shadow-soft transition hover:-translate-y-0.5 hover:shadow-lg dark:border-terracotta-900/40 dark:bg-ink-950/60;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-terracotta-200 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-terracotta-400 dark:border-terracotta-800 dark:bg-ink-950/40;
+  }
+
+  .skeleton {
+    @apply animate-pulse rounded-xl bg-terracotta-100 dark:bg-terracotta-900/30;
+  }
+}
