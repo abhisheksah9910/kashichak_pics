@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Compass, PlusSquare, User } from 'lucide-react';
+import { Home, Compass, PlusSquare, User, Archive } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function BottomNav() {
@@ -9,6 +9,7 @@ export default function BottomNav() {
   const navItems = [
     { label: 'Home / होम', path: '/', icon: Home },
     { label: 'Explore / खोजें', path: '/explore', icon: Compass },
+    { label: 'History / इतिहास', path: '/history', icon: Archive },
     { label: 'Add / जोड़ें', path: '/upload', icon: PlusSquare },
     { label: 'Profile / प्रोफ़ाइल', path: user ? '/profile' : '/login', icon: User },
   ];

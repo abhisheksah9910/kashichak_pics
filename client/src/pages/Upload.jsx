@@ -70,13 +70,13 @@ export default function Upload() {
   };
 
   const handleSubmit = async () => {
-    if (!selectedPlace) return toast.error('Please select a place.');
+    if (!selectedPlace && details.featuredLabel !== 'historical') return toast.error('Please select a place.');
     if (!file) return toast.error('Please choose a photo or video.');
     if (!details.caption || !details.dateCaptured) return toast.error('Caption and date captured are required.');
 
     const formData = new FormData();
     formData.append('media', file);
-    formData.append('placeId', selectedPlace._id);
+    if (selectedPlace) formData.append('placeId', selectedPlace._id);
     formData.append('caption', details.caption);
     formData.append('story', details.story);
     formData.append('dateCaptured', details.dateCaptured);
@@ -103,10 +103,16 @@ export default function Upload() {
         <CheckCircle2 className="mx-auto h-14 w-14 text-terracotta-600" />
         <h1 className="mt-4 font-display text-2xl font-semibold">Memory submitted!</h1>
         <p className="mt-2 text-ink-950/60 dark:text-terracotta-50/60">
-          Thank you for preserving a piece of {selectedPlace?.name}'s story. It will become publicly visible once an admin reviews it.
+          {details.featuredLabel === 'historical' ? 
+            'Thank you for preserving a piece of Kashichak\'s history. It is now visible in the History section.' : 
+            `Thank you for preserving a piece of ${selectedPlace?.name}'s story. It will become publicly visible once an admin reviews it.`}
         </p>
         <div className="mt-6 flex justify-center gap-3">
-          <button onClick={() => navigate(`/places/${selectedPlace.slug}`)} className="btn-secondary">View place</button>
+          {selectedPlace ? (
+            <button onClick={() => navigate(`/places/${selectedPlace.slug}`)} className="btn-secondary">View place</button>
+          ) : (
+            <button onClick={() => navigate('/history')} className="btn-secondary">View history</button>
+          )}
           <button onClick={() => window.location.reload()} className="btn-primary">Share another</button>
         </div>
       </div>
@@ -134,6 +140,24 @@ export default function Upload() {
         {step === 0 && (
           <div>
             <h2 className="font-display text-lg font-semibold">Select the place</h2>
+            
+            {user?.role === 'admin' && !suggestingNew && (
+              <div className="mt-4 mb-6 p-5 rounded-2xl bg-orange-50 border border-orange-200 dark:bg-orange-900/20 dark:border-orange-800 shadow-sm">
+                <h3 className="font-semibold text-orange-800 dark:text-orange-300">Admin Action</h3>
+                <p className="text-sm text-orange-700 dark:text-orange-400 mt-1 mb-4">Uploading an old Kashichak photo that doesn't belong to a specific place?</p>
+                <button 
+                  onClick={() => {
+                    setDetails({ ...details, featuredLabel: 'historical' });
+                    setSelectedPlace(null);
+                    setStep(1);
+                  }} 
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
+                >
+                  <Archive className="h-4 w-4" /> Direct Upload to History (इतिहास)
+                </button>
+              </div>
+            )}
+
             {!suggestingNew ? (
               <>
                 <div className="mt-4 flex items-center gap-2 rounded-xl border border-terracotta-200 dark:border-terracotta-800 px-4 py-3">
@@ -214,17 +238,6 @@ export default function Upload() {
             <textarea value={details.story} onChange={(e) => setDetails({ ...details, story: e.target.value })} placeholder="The story behind this memory..." rows={4} className="input" />
             <input type="date" value={details.dateCaptured} onChange={(e) => setDetails({ ...details, dateCaptured: e.target.value })} className="input" max={new Date().toISOString().split('T')[0]} />
             <input value={details.tags} onChange={(e) => setDetails({ ...details, tags: e.target.value })} placeholder="Tags, comma separated (e.g. railway, festival)" className="input" />
-            {user?.role === 'admin' && (
-              <label className="flex items-center gap-2 pt-2 cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  checked={details.featuredLabel === 'historical'} 
-                  onChange={(e) => setDetails({...details, featuredLabel: e.target.checked ? 'historical' : ''})} 
-                  className="rounded border-terracotta-300 text-terracotta-600 focus:ring-terracotta-500 h-4 w-4"
-                />
-                <span className="text-sm font-medium text-ink-950 dark:text-terracotta-50">Mark as Historical Photo (Admin only)</span>
-              </label>
-            )}
           </div>
         )}
 
@@ -232,7 +245,7 @@ export default function Upload() {
           <div>
             <h2 className="font-display text-lg font-semibold">Review & submit</h2>
             <dl className="mt-4 space-y-2 text-sm">
-              <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">Place</dt><dd className="font-medium">{selectedPlace?.name}</dd></div>
+              <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">Place</dt><dd className="font-medium">{details.featuredLabel === 'historical' ? 'History Archive' : selectedPlace?.name}</dd></div>
               <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">Caption</dt><dd className="font-medium">{details.caption}</dd></div>
               <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">Date captured</dt><dd className="font-medium">{details.dateCaptured}</dd></div>
               <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">File</dt><dd className="font-medium">{file?.name}</dd></div>
@@ -263,7 +276,7 @@ export default function Upload() {
           {step < 3 ? (
             <button
               onClick={() => {
-                if (step === 0 && !selectedPlace) return toast.error('Please select a place first.');
+                if (step === 0 && !selectedPlace && details.featuredLabel !== 'historical') return toast.error('Please select a place first.');
                 if (step === 1 && !file) return toast.error('Please choose a file first.');
                 setStep((s) => Math.min(3, s + 1));
               }}

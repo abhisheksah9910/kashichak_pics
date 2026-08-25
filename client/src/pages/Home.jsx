@@ -21,7 +21,6 @@ export default function Home() {
   const [memories, setMemories] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
   const [featured, setFeatured] = useState(null);
-  const [historical, setHistorical] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const debounceRef = useRef(null);
@@ -32,8 +31,7 @@ export default function Home() {
       api.get('/places', { params: { sort: 'most_memories', limit: 6 } }),
       api.get('/memories', { params: { sort: 'newest', limit: 8 } }),
       api.get('/users/leaderboard'),
-      api.get('/memories', { params: { label: 'historical', sort: 'newest', limit: 1 } }),
-    ]).then(([placesRes, memoriesRes, leaderboardRes, historicalRes]) => {
+    ]).then(([placesRes, memoriesRes, leaderboardRes]) => {
       if (placesRes.status === 'fulfilled') setPlaces(placesRes.value.data.data);
       if (memoriesRes.status === 'fulfilled') {
         const list = memoriesRes.value.data.data;
@@ -41,9 +39,6 @@ export default function Home() {
         setFeatured(list.find((m) => m.isFeatured) || list[0] || null);
       }
       if (leaderboardRes.status === 'fulfilled') setLeaderboard(leaderboardRes.value.data.data);
-      if (historicalRes?.status === 'fulfilled' && historicalRes.value.data.data.length > 0) {
-        setHistorical(historicalRes.value.data.data[0]);
-      }
       setLoading(false);
     });
   }, []);
@@ -115,30 +110,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Nostalgia Section */}
-      <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 mb-8">
-        <div className="flex flex-col items-center">
-          <h2 className="font-display text-3xl font-semibold text-terracotta-800 dark:text-terracotta-400 mb-8">इतिहास के पन्नों से</h2>
-          
-          <div className="bg-white dark:bg-ink-900 p-4 pb-8 sm:p-6 sm:pb-12 rounded-sm shadow-xl rotate-1 hover:rotate-0 transition-transform duration-300 max-w-md w-full border border-gray-100 dark:border-terracotta-900/30">
-            <div className="relative aspect-square w-full overflow-hidden bg-gray-100 dark:bg-ink-950 mb-6 border border-gray-200 dark:border-transparent">
-              {historical ? (
-                historical.mediaType === 'video' ? (
-                  <video src={historical.mediaUrl} className="w-full h-full object-cover filter contrast-125 sepia-[0.2]" autoPlay muted loop playsInline />
-                ) : (
-                  <img src={historical.mediaUrl} alt={historical.caption || "Old Memory"} className="w-full h-full object-cover filter contrast-125 sepia-[0.2]" />
-                )
-              ) : (
-                <img src="/old-station.jpg" alt="Old Kashichak Station" className="w-full h-full object-cover filter contrast-125 sepia-[0.2]" />
-              )}
-            </div>
-            <p className="font-serif text-xl sm:text-2xl text-center text-ink-900 dark:text-terracotta-100 leading-relaxed italic">
-              "गाँव की वो गलियाँ, वो पुराना स्टेशन...<br/>
-              वक्त बदल गया, पर यादें आज भी वहीं खड़ी हैं।"
-            </p>
-          </div>
-        </div>
-      </section>
+
 
       {/* Gaon Ki Khabar (Noticeboard) */}
       <section className="mx-auto max-w-5xl px-4 py-2 sm:px-6 mb-8 mt-2">

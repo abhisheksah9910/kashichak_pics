@@ -93,6 +93,7 @@ export default function Navbar() {
         <nav className="hidden items-center gap-8 md:flex">
           <NavLink to="/" className={navLinkClass} end>Home</NavLink>
           <NavLink to="/explore" className={navLinkClass}>Explore</NavLink>
+          <NavLink to="/history" className={navLinkClass}>History</NavLink>
           <NavLink to="/upload" className={navLinkClass}>Share a Memory</NavLink>
           {isAdmin && <NavLink to="/admin" className={navLinkClass}>Admin</NavLink>}
         </nav>

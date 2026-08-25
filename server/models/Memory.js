@@ -3,7 +3,12 @@ const mongoose = require('mongoose');
 const memorySchema = new mongoose.Schema(
   {
     uploader: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    place: { type: mongoose.Schema.Types.ObjectId, ref: 'Place', required: true, index: true },
+    place: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Place', 
+      required: function() { return this.featuredLabel !== 'historical'; }, 
+      index: true 
+    },
 
     mediaType: { type: String, enum: ['photo', 'video'], required: true },
     googleDriveFileId: { type: String, required: true },

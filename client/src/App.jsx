@@ -4,6 +4,7 @@ import Footer from './components/Footer';
 import BottomNav from './components/BottomNav';
 import Home from './pages/Home';
 import Explore from './pages/Explore';
+import History from './pages/History';
 import PlaceDetails from './pages/PlaceDetails';
 import Upload from './pages/Upload';
 import Login from './pages/Login';
@@ -22,6 +23,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/history" element={<History />} />
           <Route path="/places/:slug" element={<PlaceDetails />} />
           <Route path="/profile/:id" element={<UserProfile />} />
           <Route path="/upload" element={<Upload />} />

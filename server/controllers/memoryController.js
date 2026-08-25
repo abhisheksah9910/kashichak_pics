@@ -86,12 +86,24 @@ const uploadMemory = async (req, res, next) => {
     if (!req.file) return error(res, 400, 'A photo or video file is required.');
     const { placeId, caption, story, dateCaptured, tags, featuredLabel } = req.body;
 
-    if (!placeId || !caption || !dateCaptured) {
-      return error(res, 400, 'placeId, caption and dateCaptured are required.');
+    let finalFeaturedLabel = '';
+    if (featuredLabel === 'historical' && req.user.role === 'admin') {
+      finalFeaturedLabel = 'historical';
     }
 
-    const place = await Place.findById(placeId);
-    if (!place || place.status !== 'approved') return error(res, 404, 'Selected place not found.');
+    if (!caption || !dateCaptured) {
+      return error(res, 400, 'caption and dateCaptured are required.');
+    }
+
+    if (finalFeaturedLabel !== 'historical' && !placeId) {
+      return error(res, 400, 'placeId is required for regular memories.');
+    }
+
+    let place = null;
+    if (placeId) {
+      place = await Place.findById(placeId);
+      if (!place || place.status !== 'approved') return error(res, 404, 'Selected place not found.');
+    }
 
     const mediaType = ALLOWED_IMAGE_TYPES.includes(req.file.mimetype) ? 'photo' : 'video';
     const maxBytes = (mediaType === 'photo' ? MAX_IMAGE_MB : MAX_VIDEO_MB) * 1024 * 1024;
@@ -106,16 +118,13 @@ const uploadMemory = async (req, res, next) => {
       mimeType: req.file.mimetype,
     });
 
-    let finalFeaturedLabel = '';
-    if (featuredLabel === 'historical' && req.user.role === 'admin') {
-      finalFeaturedLabel = 'historical';
-    }
+
 
     const status = req.user.role === 'admin' ? 'approved' : 'pending';
 
     const memory = await Memory.create({
       uploader: req.user._id,
-      place: place._id,
+      place: place ? place._id : undefined,
       mediaType,
       googleDriveFileId: fileId,
       mediaUrl,
@@ -131,7 +140,7 @@ const uploadMemory = async (req, res, next) => {
       featuredLabel: finalFeaturedLabel,
     });
 
-    if (status === 'approved') {
+    if (status === 'approved' && place) {
       const countUpdate = { $inc: { memoryCount: 1 } };
       if (mediaType === 'photo') countUpdate.$inc.photoCount = 1;
       if (mediaType === 'video') countUpdate.$inc.videoCount = 1;
