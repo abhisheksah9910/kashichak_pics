@@ -63,7 +63,7 @@ export default function Upload() {
     const isImage = f.type.startsWith('image/');
     const isVideo = f.type.startsWith('video/');
     if (!isImage && !isVideo) return toast.error('Please choose an image or video file.');
-    const maxMB = isImage ? 15 : 200;
+    const maxMB = isImage ? 15 : 100;
     if (f.size > maxMB * 1024 * 1024) return toast.error(`File too large. Max ${maxMB}MB for this type.`);
     setFile(f);
     setPreview(URL.createObjectURL(f));
@@ -188,7 +188,7 @@ export default function Upload() {
               >
                 <UploadCloud className="h-10 w-10" />
                 <p className="mt-3 text-sm font-medium">Click to choose a file</p>
-                <p className="mt-1 text-xs text-ink-950/40 dark:text-terracotta-50/40">JPG, PNG, WEBP up to 15MB · MP4, MOV, WEBM up to 200MB</p>
+                <p className="mt-1 text-xs text-ink-950/40 dark:text-terracotta-50/40">JPG, PNG, WEBP up to 15MB · MP4, MOV, WEBM up to 100MB</p>
               </button>
             ) : (
               <div className="relative mt-4 overflow-hidden rounded-2xl border border-terracotta-200 dark:border-terracotta-800">

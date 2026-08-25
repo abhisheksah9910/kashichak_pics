@@ -1,7 +1,7 @@
 const multer = require('multer');
 
 const MAX_IMAGE_MB = Number(process.env.MAX_IMAGE_SIZE_MB || 15);
-const MAX_VIDEO_MB = Number(process.env.MAX_VIDEO_SIZE_MB || 200);
+const MAX_VIDEO_MB = Number(process.env.MAX_VIDEO_SIZE_MB || 100);
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-matroska'];
