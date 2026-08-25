@@ -158,18 +158,26 @@ const deleteMemory = async (req, res, next) => {
     if (!isOwner && req.user.role !== 'admin') return error(res, 403, 'Not authorized to delete this memory.');
 
     // Try to delete from Google Drive first. 
-    // If this fails, the error will be passed to the catch block and the database record will NOT be deleted.
     if (memory.googleDriveFileId) {
       await driveService.deleteFile(memory.googleDriveFileId);
     }
     
     await memory.deleteOne();
 
+    // Decrement the place counters to keep them accurate
+    if (memory.status === 'approved') {
+      const countUpdate = { $inc: { memoryCount: -1 } };
+      if (memory.mediaType === 'photo') countUpdate.$inc.photoCount = -1;
+      if (memory.mediaType === 'video') countUpdate.$inc.videoCount = -1;
+      await Place.findByIdAndUpdate(memory.place, countUpdate);
+    }
+
     return success(res, 200, 'Memory deleted.');
   } catch (err) {
     next(err);
   }
 };
+
 
 // POST /api/memories/:id/like  (toggle)
 const toggleLike = async (req, res, next) => {

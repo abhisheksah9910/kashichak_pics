@@ -203,12 +203,15 @@ export default function PlaceDetails() {
                           alt={m.caption}
                           loading="lazy"
                           className="w-full object-cover transition duration-500 group-hover:scale-105"
-                          onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'flex';
+                          }}
                         />
-                        <div className="hidden aspect-video w-full items-center justify-center bg-gradient-to-br from-gray-900 to-black" style={{display:'none'}}>
-                          <span className="text-4xl text-white opacity-60">▶</span>
+                        <div className="aspect-[3/4] w-full items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800" style={{display:'none'}}>
+                          <span className="text-4xl text-white opacity-40">▶</span>
                         </div>
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition group-hover:bg-black/30">
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/25 transition group-hover:bg-black/40">
                           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm transition duration-300 group-hover:scale-110 group-hover:bg-black/70">
                             <span className="ml-1 text-lg text-white">▶</span>
                           </div>

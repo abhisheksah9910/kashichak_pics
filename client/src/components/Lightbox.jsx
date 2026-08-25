@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { X, ChevronLeft, ChevronRight, Heart, Flag, Trash2, MessageCircle, Share2 } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Heart, Flag, Trash2, MessageCircle, Share2, Edit2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 
@@ -9,6 +9,7 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [loadingComments, setLoadingComments] = useState(false);
+    const [detailsOpen, setDetailsOpen] = useState(false);
 
     useEffect(() => {
         setLoadingComments(true);
@@ -22,7 +23,6 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
         e.preventDefault();
         if (!currentUser) return toast.error('Please log in to comment.');
         if (!newComment.trim()) return;
-
         try {
             const res = await api.post(`/memories/${memory._id}/comments`, { text: newComment });
             setComments([...comments, res.data.data]);
@@ -45,17 +45,9 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
     };
 
     const handleShare = async () => {
-        const shareData = {
-            title: memory.caption,
-            text: `Check out this memory on Apna Kashichak!`,
-            url: window.location.href,
-        };
+        const shareData = { title: memory.caption, text: `Check out this memory on Apna Kashichak!`, url: window.location.href };
         if (navigator.share) {
-            try {
-                await navigator.share(shareData);
-            } catch (err) {
-                console.error('Error sharing:', err);
-            }
+            try { await navigator.share(shareData); } catch (err) { console.error('Error sharing:', err); }
         } else {
             navigator.clipboard.writeText(window.location.href);
             toast.success('Link copied to clipboard!');
@@ -63,38 +55,79 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4" onClick={onClose}>
-            <button onClick={onClose} className="absolute right-4 top-4 text-white/80 hover:text-white" aria-label="Close">
-                <X className="h-8 w-8" />
-            </button>
-            <button onClick={(e) => { e.stopPropagation(); onPrev(); }} className="absolute left-4 text-white/70 hover:text-white" aria-label="Previous">
-                <ChevronLeft className="h-8 w-8" />
-            </button>
-            <button onClick={(e) => { e.stopPropagation(); onNext(); }} className="absolute right-4 text-white/70 hover:text-white" aria-label="Next">
-                <ChevronRight className="h-8 w-8" />
+        <div className="fixed inset-0 z-50 bg-black/95 flex flex-col md:flex-row md:items-center md:justify-center md:p-4" onClick={onClose}>
+            {/* Close button */}
+            <button onClick={onClose} className="absolute right-4 top-4 z-50 text-white/80 hover:text-white" aria-label="Close">
+                <X className="h-7 w-7" />
             </button>
 
-            <div className="flex flex-col md:flex-row max-h-[90vh] w-full max-w-6xl overflow-hidden rounded-2xl bg-ink-950" onClick={(e) => e.stopPropagation()}>
-                {/* Media Section */}
-                <div className="flex-1 flex items-center justify-center bg-black min-h-[40vh] md:min-h-0">
-                    {memory.mediaType === 'video' ? (
-                        <video src={memory.mediaUrl} controls autoPlay className="max-h-[90vh] w-full object-contain" />
-                    ) : (
-                        <img src={memory.mediaUrl} alt={memory.caption} className="max-h-[90vh] w-full object-contain" />
-                    )}
+            {/* Prev / Next arrows - hidden on mobile, shown on desktop */}
+            <button onClick={(e) => { e.stopPropagation(); onPrev(); }} className="absolute left-2 top-1/2 -translate-y-1/2 z-50 hidden md:block text-white/70 hover:text-white" aria-label="Previous">
+                <ChevronLeft className="h-10 w-10" />
+            </button>
+            <button onClick={(e) => { e.stopPropagation(); onNext(); }} className="absolute right-2 top-1/2 -translate-y-1/2 z-50 hidden md:block text-white/70 hover:text-white" aria-label="Next">
+                <ChevronRight className="h-10 w-10" />
+            </button>
+
+            {/* Main container */}
+            <div
+                className="flex flex-col md:flex-row w-full md:max-w-6xl md:max-h-[90vh] md:overflow-hidden md:rounded-2xl md:bg-ink-950"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* ===== MEDIA SECTION ===== */}
+                <div className="relative flex-1 flex items-center justify-center bg-black"
+                    style={{ minHeight: 'calc(100dvh - 0px)', maxHeight: '100dvh' }}
+                >
+                    {/* On mobile: restrict to ~60% of screen height */}
+                    <div className="w-full md:h-full" style={{ maxHeight: '65dvh' }}>
+                        {memory.mediaType === 'video' ? (
+                            <video
+                                src={memory.mediaUrl}
+                                controls
+                                autoPlay
+                                className="h-full w-full object-contain"
+                                style={{ maxHeight: '65dvh' }}
+                            />
+                        ) : (
+                            <img
+                                src={memory.mediaUrl}
+                                alt={memory.caption}
+                                className="h-full w-full object-contain"
+                                style={{ maxHeight: '65dvh' }}
+                            />
+                        )}
+                    </div>
+
+                    {/* Mobile swipe arrows overlaid on media */}
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onPrev(); }}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 md:hidden flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white"
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onNext(); }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 md:hidden flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white"
+                    >
+                        <ChevronRight className="h-5 w-5" />
+                    </button>
                 </div>
 
-                {/* Details & Comments Section */}
-                <div className="w-full md:w-96 bg-ink-900 flex flex-col h-[50vh] md:h-auto border-l border-white/10">
-                    <div className="p-6 text-white border-b border-white/10 shrink-0">
-                        <h3 className="font-display text-xl font-semibold">{memory.caption}</h3>
-                        {memory.story && <p className="mt-2 text-sm text-white/70">{memory.story}</p>}
-                        <p className="mt-2 text-xs text-white/50">
+                {/* ===== DETAILS & COMMENTS (Instagram-style bottom sheet on mobile) ===== */}
+                <div
+                    className="w-full md:w-96 bg-ink-950 flex flex-col md:h-full border-t md:border-t-0 md:border-l border-white/10"
+                    style={{ maxHeight: '40dvh', overflowY: 'auto' }}
+                >
+                    {/* Header */}
+                    <div className="p-4 text-white border-b border-white/10 shrink-0">
+                        <h3 className="font-display text-base md:text-xl font-semibold line-clamp-1">{memory.caption}</h3>
+                        {memory.story && <p className="mt-1 text-sm text-white/70 line-clamp-2">{memory.story}</p>}
+                        <p className="mt-1 text-xs text-white/50">
                             <Link to={`/profile/${memory.uploader?._id || memory.uploader}`} className="hover:underline">
                                 {memory.uploader?.name}
                             </Link> · Captured {new Date(memory.dateCaptured).toLocaleDateString()}
                         </p>
-                        <div className="mt-4 flex flex-wrap items-center gap-2">
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
                             <button onClick={onLike} className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs hover:bg-white/20">
                                 <Heart className="h-3.5 w-3.5" /> {memory.likeCount || 0}
                             </button>
@@ -117,19 +150,19 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
                         </div>
                     </div>
 
-                    {/* Comments List */}
+                    {/* Comments */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
                         {loadingComments ? (
                             <div className="text-center text-white/50 text-sm">Loading comments...</div>
                         ) : comments.length === 0 ? (
                             <div className="text-center text-white/50 text-sm flex flex-col items-center justify-center h-full">
-                                <MessageCircle className="h-8 w-8 mb-2 opacity-50" />
+                                <MessageCircle className="h-7 w-7 mb-2 opacity-50" />
                                 No comments yet. Be the first!
                             </div>
                         ) : (
                             comments.map(comment => (
                                 <div key={comment._id} className="flex gap-3 group">
-                                    <div className="h-8 w-8 shrink-0 rounded-full bg-terracotta-600 overflow-hidden flex items-center justify-center text-xs text-white">
+                                    <div className="h-7 w-7 shrink-0 rounded-full bg-terracotta-600 overflow-hidden flex items-center justify-center text-xs text-white">
                                         {comment.user?.profileImage ? (
                                             <img src={comment.user.profileImage} alt={comment.user.name} className="h-full w-full object-cover" />
                                         ) : (
@@ -160,7 +193,7 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
                     </div>
 
                     {/* Comment Input */}
-                    <div className="p-4 border-t border-white/10 shrink-0 bg-ink-950">
+                    <div className="p-3 border-t border-white/10 shrink-0 bg-ink-950">
                         <form onSubmit={handleAddComment} className="flex gap-2">
                             <input
                                 type="text"
@@ -173,7 +206,7 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
                             <button
                                 type="submit"
                                 disabled={!currentUser || !newComment.trim()}
-                                className="bg-terracotta-600 text-white rounded-full px-4 py-2 text-sm font-medium hover:bg-terracotta-500 disabled:opacity-50 disabled:hover:bg-terracotta-600 transition-colors"
+                                className="bg-terracotta-600 text-white rounded-full px-4 py-2 text-sm font-medium hover:bg-terracotta-500 disabled:opacity-50 transition-colors"
                             >
                                 Post
                             </button>
