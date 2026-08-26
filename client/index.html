@@ -12,9 +12,7 @@
     <meta property="og:url" content="https://kashichak-pics.vercel.app" />
     <meta property="og:type" content="website" />
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json" />
-    
+    <!-- PWA Manifest will be injected by vite-plugin-pwa -->
     <title>Apna Kashichak — Every Place Has a Story</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,14 +21,6 @@
   <body class="bg-white dark:bg-ink-950">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then(reg => {
-            console.log('SW registered!', reg);
-          }).catch(err => console.log('SW registration failed', err));
-        });
-      }
-    </script>
+
   </body>
 </html>
