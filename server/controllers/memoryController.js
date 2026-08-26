@@ -2,6 +2,7 @@ const Memory = require('../models/Memory');
 const Place = require('../models/Place');
 const Like = require('../models/Like');
 const driveService = require('../services/googleDriveService');
+const sharp = require('sharp');
 const { success, error } = require('../utils/apiResponse');
 const { ALLOWED_IMAGE_TYPES, MAX_IMAGE_MB, MAX_VIDEO_MB } = require('../middleware/upload');
 
@@ -122,11 +123,29 @@ const uploadMemory = async (req, res, next) => {
       return error(res, 400, `File too large. Max size for ${mediaType}s is ${mediaType === 'photo' ? MAX_IMAGE_MB : MAX_VIDEO_MB}MB.`);
     }
 
-    // Upload the original file, untouched, to Google Drive.
+    let finalBuffer = req.file.buffer;
+    let finalMimeType = req.file.mimetype;
+    let finalOriginalName = req.file.originalname;
+
+    if (mediaType === 'photo') {
+      try {
+        finalBuffer = await sharp(req.file.buffer)
+          .resize(1920, 1080, { fit: 'inside', withoutEnlargement: true })
+          .webp({ quality: 80 })
+          .toBuffer();
+        finalMimeType = 'image/webp';
+        finalOriginalName = finalOriginalName.replace(/\.[^/.]+$/, "") + ".webp";
+      } catch (err) {
+        console.error("Error compressing image:", err);
+        // Fallback to original buffer if compression fails
+      }
+    }
+
+    // Upload the file to Google Drive.
     const { fileId, mediaUrl, thumbnailUrl } = await driveService.uploadFile({
-      buffer: req.file.buffer,
-      originalName: req.file.originalname,
-      mimeType: req.file.mimetype,
+      buffer: finalBuffer,
+      originalName: finalOriginalName,
+      mimeType: finalMimeType,
     });
 
 
@@ -140,9 +159,9 @@ const uploadMemory = async (req, res, next) => {
       googleDriveFileId: fileId,
       mediaUrl,
       thumbnailUrl: mediaType === 'photo' ? mediaUrl : thumbnailUrl,
-      originalFileName: req.file.originalname,
-      fileSize: req.file.size,
-      mimeType: req.file.mimetype,
+      originalFileName: finalOriginalName,
+      fileSize: finalBuffer.length,
+      mimeType: finalMimeType,
       caption,
       story,
       tags: tags ? tags.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean) : [],

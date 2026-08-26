@@ -146,6 +146,8 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.get('/api/media/:fileId', async (req, res) => {
   try {
     const stream = await getFileStream(req.params.fileId);
+    // Cache the media for 1 year (31536000 seconds)
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     stream.pipe(res);
   } catch (err) {
     res.status(404).json({ success: false, message: 'Media not found.' });

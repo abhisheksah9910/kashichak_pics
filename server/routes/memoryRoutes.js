@@ -13,13 +13,14 @@ const {
 } = require('../controllers/memoryController');
 const { protect, attachUserIfPresent } = require('../middleware/auth');
 const { upload } = require('../middleware/upload');
+const cacheMiddleware = require('../middleware/cacheMiddleware');
 
 const router = express.Router();
 
-router.get('/', attachUserIfPresent, listMemories);
-router.get('/timeline', attachUserIfPresent, getTimeline);
-router.get('/:id', attachUserIfPresent, getMemoryById);
-router.get('/:id/comments', getComments);
+router.get('/', attachUserIfPresent, cacheMiddleware(300), listMemories);
+router.get('/timeline', attachUserIfPresent, cacheMiddleware(300), getTimeline);
+router.get('/:id', attachUserIfPresent, cacheMiddleware(300), getMemoryById);
+router.get('/:id/comments', cacheMiddleware(300), getComments);
 
 router.post('/', protect, upload.single('media'), uploadMemory);
 router.put('/:id', protect, updateMemory);
