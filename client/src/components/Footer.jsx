@@ -1,18 +1,21 @@
 import { Link } from 'react-router-dom';
-import { Instagram, Facebook, Youtube, Compass, PlusSquare, MapPin } from 'lucide-react';
+import { Instagram, Facebook, Youtube, Heart, MapPin } from 'lucide-react';
 
 export default function Footer() {
-  const badges = [
-    { name: 'INSTAGRAM', icon: Instagram, color: 'bg-[#e1306c]', href: 'https://www.instagram.com/kashichak_pics/' },
-    { name: 'FACEBOOK', icon: Facebook, color: 'bg-[#1877F2]', href: 'https://www.facebook.com/share/1EuLPGp3oM/' },
-    { name: 'YOUTUBE', icon: Youtube, color: 'bg-[#FF0000]', href: 'https://www.youtube.com/@kashichakpics' },
-    { 
-      name: 'WHATSAPP', 
-      icon: (props) => (
   const socialLinks = [
-    { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/apna_kashichak/', hoverClass: 'hover:bg-pink-100 hover:text-pink-600 dark:hover:bg-pink-900/30 dark:hover:text-pink-400' },
-    { name: 'Facebook', icon: Facebook, href: 'https://www.facebook.com/kashichak/', hoverClass: 'hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900/30 dark:hover:text-blue-400' },
-    { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/@apnakashichak', hoverClass: 'hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400' }
+    { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/kashichak_pics/', hoverClass: 'hover:bg-pink-100 hover:text-pink-600 dark:hover:bg-pink-900/30 dark:hover:text-pink-400' },
+    { name: 'Facebook', icon: Facebook, href: 'https://www.facebook.com/share/1EuLPGp3oM/', hoverClass: 'hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900/30 dark:hover:text-blue-400' },
+    { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/@kashichakpics', hoverClass: 'hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400' },
+    { 
+      name: 'WhatsApp', 
+      icon: (props) => (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+          <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
+        </svg>
+      ), 
+      href: 'https://whatsapp.com/channel/0029VbDVZoFKLaHuZfj9mV1U', 
+      hoverClass: 'hover:bg-green-100 hover:text-green-600 dark:hover:bg-green-900/30 dark:hover:text-green-400'
+    }
   ];
 
   return (
