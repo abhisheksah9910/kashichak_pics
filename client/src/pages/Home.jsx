@@ -15,6 +15,34 @@ const steps = [
   { icon: Archive, title: 'Preserve it forever (हमेशा के लिए संजोएँ)', text: 'It joins the place\'s living timeline.' },
 ];
 
+const TypewriterText = ({ text }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  
+  useEffect(() => {
+    setDisplayedText("");
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayedText(text.slice(0, i + 1));
+      i++;
+      if (i > text.length) clearInterval(interval);
+    }, 80);
+    return () => clearInterval(interval);
+  }, [text]);
+
+  return (
+    <>
+      <span className="bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent">{displayedText}</span>
+      <motion.span 
+        animate={{ opacity: [1, 0, 1] }} 
+        transition={{ repeat: Infinity, duration: 0.8 }}
+        className="text-terracotta-500 font-light ml-1"
+      >
+        |
+      </motion.span>
+    </>
+  );
+};
+
 export default function Home() {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -30,7 +58,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setIsHindi((prev) => !prev);
-    }, 4000);
+    }, 4500); // Wait 4.5s so typing finishes
     return () => clearInterval(interval);
   }, []);
 
@@ -78,39 +106,15 @@ export default function Home() {
           <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 10, repeat: Infinity, delay: 1 }} className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-orange-600/20 blur-[120px]" />
         </div>
         
-        <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32 h-[450px] flex flex-col justify-center perspective-[1000px]">
-          <div className="h-40 sm:h-48 flex items-center justify-center transform-style-preserve-3d">
-            <AnimatePresence mode="wait">
-              {!isHindi ? (
-                <motion.h1 
-                  key="english"
-                  initial={{ opacity: 0, y: 50, filter: 'blur(12px)', rotateX: -40, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', rotateX: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -50, filter: 'blur(12px)', rotateX: 40, scale: 0.9 }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 150, mass: 1.2 }}
-                  className="font-display text-5xl font-bold leading-tight sm:text-7xl tracking-tight absolute drop-shadow-2xl"
-                >
-                  Welcome to Apna Kashichak
-                </motion.h1>
-              ) : (
-                <motion.h1 
-                  key="hindi"
-                  initial={{ opacity: 0, y: 50, filter: 'blur(12px)', rotateX: -40, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', rotateX: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -50, filter: 'blur(12px)', rotateX: 40, scale: 0.9 }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 150, mass: 1.2 }}
-                  className="font-display text-5xl sm:text-7xl font-bold leading-tight tracking-tight absolute bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent drop-shadow-2xl"
-                >
-                  अपना काशीचक में आपका स्वागत है
-                </motion.h1>
-              )}
-            </AnimatePresence>
-          </div>
+        <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32 flex flex-col justify-center min-h-[350px]">
+          <h1 className="font-display text-4xl sm:text-6xl font-bold leading-tight tracking-tight min-h-[120px] sm:min-h-[160px] flex items-center justify-center drop-shadow-xl">
+            <TypewriterText text={!isHindi ? "Welcome to Apna Kashichak" : "अपना काशीचक में आपका स्वागत है"} />
+          </h1>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
             <Link to="/explore" className="btn-primary shadow-terracotta-600/20 shadow-lg"><Compass className="h-4 w-4" /> Explore (जगहें खोजें)</Link>
             <Link to="/upload" className="btn-secondary !bg-white/10 !border-white/20 !text-white hover:!bg-white/20"><UploadCloud className="h-4 w-4" /> Share Memory (यादें साझा करें)</Link>
