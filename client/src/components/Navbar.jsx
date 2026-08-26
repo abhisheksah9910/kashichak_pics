@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Landmark, Menu, X, Sun, Moon, Upload, User, LogOut, ShieldCheck, Bell } from 'lucide-react';
+import { Landmark, Menu, X, Sun, Moon, Upload, User, LogOut, ShieldCheck, Bell, Download } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import api from '../services/api';
@@ -82,6 +82,26 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-40 border-b border-terracotta-100 dark:border-terracotta-900/40 bg-white/70 dark:bg-ink-950/70 backdrop-blur-lg shadow-sm transition-colors duration-300">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
@@ -115,6 +135,16 @@ export default function Navbar() {
           <button onClick={toggleTheme} aria-label="Toggle dark mode" className="rounded-full p-2 text-ink-950/70 hover:bg-terracotta-50 dark:text-terracotta-50/70 dark:hover:bg-terracotta-900/30 transition-colors">
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
+
+          {/* PWA Install Button */}
+          {deferredPrompt && (
+            <button 
+              onClick={handleInstallClick} 
+              className="hidden md:flex items-center gap-1 rounded-full bg-terracotta-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-terracotta-700 transition-colors"
+            >
+              <Download className="h-4 w-4" /> Install App
+            </button>
+          )}
           
           {/* Desktop Only Actions */}
           <div className="hidden md:flex items-center gap-3">
