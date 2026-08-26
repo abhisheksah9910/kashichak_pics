@@ -47,7 +47,9 @@ function NotificationBell({ user }) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 rounded-xl border border-terracotta-100 bg-white p-4 shadow-xl dark:border-terracotta-900/40 dark:bg-ink-950 z-50">
+        <>
+          <div className="fixed inset-0 z-40 sm:hidden" onClick={() => setIsOpen(false)}></div>
+          <div className="fixed left-4 right-4 top-16 z-50 mt-2 rounded-xl border border-terracotta-100 bg-white p-4 shadow-xl dark:border-terracotta-900/40 dark:bg-ink-950 sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:w-80">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold">Notifications</h3>
             {unreadCount > 0 && (
@@ -62,13 +64,14 @@ function NotificationBell({ user }) {
             ) : (
               notifications.map(n => (
                 <div key={n._id} onClick={() => handleMarkAsRead(n._id)} className={`p-3 rounded-lg cursor-pointer transition ${n.isRead ? 'opacity-60' : 'bg-terracotta-50 dark:bg-terracotta-900/20'}`}>
-                  <p className="text-sm">{n.message}</p>
-                  <p className="text-[10px] text-ink-950/40 dark:text-terracotta-50/40 mt-1">{new Date(n.createdAt).toLocaleString()}</p>
+                  <p className="text-sm break-words">{n.message}</p>
+                  <p className="mt-1 text-[10px] text-ink-950/40 dark:text-terracotta-50/40">{new Date(n.createdAt).toLocaleString()}</p>
                 </div>
               ))
             )}
           </div>
         </div>
+        </>
       )}
     </div>
   );
