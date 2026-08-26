@@ -72,14 +72,21 @@ export default function Home() {
         
         <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32">
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="font-display text-5xl font-semibold leading-tight sm:text-7xl"
+            initial={{ opacity: 0, y: 40, filter: 'blur(12px)', scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="font-display text-5xl font-bold leading-tight sm:text-7xl tracking-tight"
           >
-            Every Place Has a Story.
+            Welcome to Apna Kashichak
             <br />
-            <span className="bg-gradient-to-r from-terracotta-400 to-orange-400 bg-clip-text text-transparent">हर जगह की एक कहानी है।</span>
+            <motion.span 
+              initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-3 block bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent sm:text-6xl text-4xl leading-tight"
+            >
+              अपना काशीचक में आपका स्वागत है
+            </motion.span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
