@@ -7,7 +7,7 @@ import PlaceCard from '../components/PlaceCard';
 import MemoryCard from '../components/MemoryCard';
 import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
-
+import AdBanner from '../components/AdBanner';
 
 const TypewriterText = ({ texts, typingSpeed = 80, deletingSpeed = 40, pause = 2500 }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -204,6 +204,11 @@ export default function Home() {
       </motion.section>
 
       <AnimatedDivider />
+
+      {/* Ad Placement */}
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+        <AdBanner type="horizontal" slotId="home_middle" />
+      </section>
 
       {/* Top Contributors */}
       <section className="bg-terracotta-50/30 dark:bg-terracotta-950/5 py-16">

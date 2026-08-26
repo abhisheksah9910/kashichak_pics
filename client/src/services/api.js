@@ -10,6 +10,20 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// ==========================================
+// Announcements
+// ==========================================
+
+export const getAnnouncement = async () => {
+  const res = await api.get('/announcement');
+  return res.data;
+};
+
+export const updateAnnouncement = async (data) => {
+  const res = await api.put('/announcement', data);
+  return res.data;
+};
+
 // Normalizes error messages so components can just do err.message
 api.interceptors.response.use(
   (res) => res,

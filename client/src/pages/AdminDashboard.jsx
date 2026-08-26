@@ -22,6 +22,7 @@ const TABS = [
   'Reports',
   'Manage Places',
   'Manage Memories',
+  'Announcements',
 ];
 
 export default function AdminDashboard() {
@@ -32,6 +33,7 @@ export default function AdminDashboard() {
   const [reports, setReports] = useState([]);
   const [places, setPlaces] = useState([]);
   const [allMemories, setAllMemories] = useState([]);
+  const [announcement, setAnnouncement] = useState({ message: '', isActive: false, backgroundColor: 'bg-terracotta-600', link: '' });
   const [loading, setLoading] = useState(true);
 
   const loadTab = async (selectedTab) => {
@@ -70,6 +72,11 @@ export default function AdminDashboard() {
       if (selectedTab === 'Manage Memories') {
         const response = await api.get('/memories', { params: { limit: 100 } });
         setAllMemories(response.data.data);
+      }
+
+      if (selectedTab === 'Announcements') {
+        const response = await api.get('/announcement');
+        if (response.data.data) setAnnouncement(response.data.data);
       }
     } catch (err) {
       console.error(err);
@@ -245,6 +252,16 @@ export default function AdminDashboard() {
       await api.delete(`/memories/${id}`);
       toast.success('Memory deleted.');
       setAllMemories((prev) => prev.filter((m) => m._id !== id));
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleSaveAnnouncement = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put('/announcement', announcement);
+      toast.success('Announcement saved!');
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
     }
@@ -598,6 +615,64 @@ export default function AdminDashboard() {
               ))}
             </div>
           )
+        ) : tab === 'Announcements' ? (
+          <div className="card p-6 max-w-2xl">
+            <h2 className="text-xl font-semibold mb-4">Global Announcement Banner</h2>
+            <form onSubmit={handleSaveAnnouncement} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Message</label>
+                <input 
+                  type="text" 
+                  value={announcement.message} 
+                  onChange={(e) => setAnnouncement({...announcement, message: e.target.value})} 
+                  className="input w-full"
+                  required
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <input 
+                  type="checkbox" 
+                  id="isActive"
+                  checked={announcement.isActive}
+                  onChange={(e) => setAnnouncement({...announcement, isActive: e.target.checked})}
+                  className="h-4 w-4"
+                />
+                <label htmlFor="isActive" className="text-sm font-medium">Banner Active (Show to everyone)</label>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Background Color (Tailwind Class)</label>
+                <select 
+                  value={announcement.backgroundColor}
+                  onChange={(e) => setAnnouncement({...announcement, backgroundColor: e.target.value})}
+                  className="input w-full"
+                >
+                  <option value="bg-terracotta-600">Terracotta (Primary)</option>
+                  <option value="bg-pink-600">Pink (Festival)</option>
+                  <option value="bg-blue-600">Blue (Notice)</option>
+                  <option value="bg-green-600">Green (Success)</option>
+                  <option value="bg-red-600">Red (Urgent)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Optional Link (URL)</label>
+                <input 
+                  type="text" 
+                  value={announcement.link} 
+                  onChange={(e) => setAnnouncement({...announcement, link: e.target.value})} 
+                  className="input w-full"
+                  placeholder="https://..."
+                />
+              </div>
+              <button type="submit" className="btn-primary w-full py-2">Save Announcement</button>
+            </form>
+
+            <div className="mt-8 border-t border-terracotta-100 dark:border-terracotta-900/40 pt-6">
+              <h3 className="text-sm font-medium text-ink-950/60 dark:text-terracotta-50/60 mb-2">Live Preview</h3>
+              <div className={`${announcement.backgroundColor} text-white px-4 py-2 text-center text-sm font-medium rounded-md`}>
+                {announcement.message}
+              </div>
+            </div>
+          </div>
         ) : null}
       </div>
     </div>

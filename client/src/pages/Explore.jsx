@@ -4,6 +4,8 @@ import api from '../services/api';
 import PlaceCard from '../components/PlaceCard';
 import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
+import AdBanner from '../components/AdBanner';
+
 export default function Explore() {
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -98,6 +100,10 @@ export default function Explore() {
           >
             Clear Filters
           </button>
+
+          <div className="pt-4">
+            <AdBanner type="square" slotId="explore_sidebar" />
+          </div>
         </div>
 
         {/* Main Content */}
