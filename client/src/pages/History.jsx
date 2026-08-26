@@ -4,11 +4,16 @@ import api from '../services/api';
 import MemoryCard from '../components/MemoryCard';
 import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
+import { useAuth } from '../context/AuthContext';
+import Lightbox from '../components/Lightbox';
+import toast from 'react-hot-toast';
 
 export default function History() {
+  const { user } = useAuth();
   const [memories, setMemories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('photo');
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -21,8 +26,58 @@ export default function History() {
         setLoading(false);
       }
     };
+    };
     fetchHistory();
   }, []);
+
+  const handleLike = async (memoryId) => {
+    if (!user) return toast.error('Please log in to like memories.');
+    try {
+      const res = await api.post(`/memories/${memoryId}/like`);
+      setMemories((prev) => prev.map((m) => (m._id === memoryId ? { ...m, likeCount: res.data.data.likeCount } : m)));
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleReport = async (memoryId) => {
+    if (!user) return toast.error('Please log in to report content.');
+    try {
+      await api.post('/reports', { memoryId, reason: 'inappropriate' });
+      toast.success('Reported. Our moderators will review it.');
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleDeleteMemory = async (memoryId) => {
+    if (!window.confirm('Are you sure you want to delete this memory?')) return;
+    try {
+      await api.delete(`/memories/${memoryId}`);
+      toast.success('Memory deleted.');
+      setMemories((prev) => prev.filter((m) => m._id !== memoryId));
+      setLightboxIndex(null);
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleEditMemory = async (memory) => {
+    const newCaption = window.prompt('Enter new caption:', memory.caption);
+    if (newCaption === null) return;
+    const newStory = window.prompt('Enter new story (optional):', memory.story || '');
+    if (newStory === null) return;
+
+    try {
+      const res = await api.put(`/memories/${memory._id}`, { caption: newCaption, story: newStory });
+      toast.success('Memory updated.');
+      setMemories((prev) => prev.map((m) => (m._id === memory._id ? { ...m, caption: newCaption, story: newStory } : m)));
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
+
+  const filteredMemories = memories.filter(m => filter === 'all' || (filter === 'photo' ? m.mediaType === 'photo' : m.mediaType === 'video'));
 
   return (
     <div>
@@ -60,20 +115,13 @@ export default function History() {
 
         {loading ? (
           <GridSkeleton count={6} />
-        ) : memories.length > 0 ? (
+        ) : filteredMemories.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {memories
-              .filter(m => filter === 'all' || (filter === 'photo' ? m.mediaType === 'photo' : m.mediaType === 'video'))
-              .map((memory) => (
+            {filteredMemories.map((memory, idx) => (
               <div key={memory._id}>
-                <MemoryCard memory={memory} />
+                <MemoryCard memory={memory} onClick={() => setLightboxIndex(idx)} />
               </div>
             ))}
-            {memories.filter(m => filter === 'all' || (filter === 'photo' ? m.mediaType === 'photo' : m.mediaType === 'video')).length === 0 && (
-              <div className="col-span-full py-12 text-center text-ink-950/50 dark:text-terracotta-50/50">
-                No {filter}s found.
-              </div>
-            )}
           </div>
         ) : (
           <EmptyState 
@@ -83,6 +131,21 @@ export default function History() {
           />
         )}
       </div>
+
+      {/* Lightbox */}
+      {lightboxIndex !== null && filteredMemories[lightboxIndex] && (
+        <Lightbox
+          memory={filteredMemories[lightboxIndex]}
+          currentUser={user}
+          onClose={() => setLightboxIndex(null)}
+          onPrev={() => setLightboxIndex((i) => (i > 0 ? i - 1 : i))}
+          onNext={() => setLightboxIndex((i) => (i < filteredMemories.length - 1 ? i + 1 : i))}
+          onLike={() => handleLike(filteredMemories[lightboxIndex]._id)}
+          onReport={() => handleReport(filteredMemories[lightboxIndex]._id)}
+          onDelete={() => handleDeleteMemory(filteredMemories[lightboxIndex]._id)}
+          onEdit={() => handleEditMemory(filteredMemories[lightboxIndex])}
+        />
+      )}
     </div>
   );
 }
