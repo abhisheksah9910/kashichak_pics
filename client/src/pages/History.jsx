@@ -61,11 +61,11 @@ export default function History() {
         {loading ? (
           <GridSkeleton count={6} />
         ) : memories.length > 0 ? (
-          <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {memories
               .filter(m => filter === 'all' || (filter === 'photo' ? m.mediaType === 'photo' : m.mediaType === 'video'))
               .map((memory) => (
-              <div key={memory._id} className="break-inside-avoid">
+              <div key={memory._id}>
                 <MemoryCard memory={memory} />
               </div>
             ))}
