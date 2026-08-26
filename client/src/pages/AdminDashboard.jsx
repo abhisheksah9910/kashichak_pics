@@ -21,8 +21,10 @@ const TABS = [
   'Place Suggestions',
   'Reports',
   'Manage Places',
+  'Manage Places',
   'Manage Memories',
   'Announcements',
+  'Manage Ads',
 ];
 
 export default function AdminDashboard() {
@@ -33,7 +35,9 @@ export default function AdminDashboard() {
   const [reports, setReports] = useState([]);
   const [places, setPlaces] = useState([]);
   const [allMemories, setAllMemories] = useState([]);
+  const [ads, setAds] = useState([]);
   const [announcement, setAnnouncement] = useState({ message: '', isActive: false, backgroundColor: 'bg-terracotta-600', link: '' });
+  const [newAd, setNewAd] = useState({ file: null, caption: '', link: '', slot: 'general' });
   const [loading, setLoading] = useState(true);
 
   const loadTab = async (selectedTab) => {
@@ -77,6 +81,11 @@ export default function AdminDashboard() {
       if (selectedTab === 'Announcements') {
         const response = await api.get('/announcement');
         if (response.data.data) setAnnouncement(response.data.data);
+      }
+
+      if (selectedTab === 'Manage Ads') {
+        const response = await api.get('/ads');
+        setAds(response.data.data);
       }
     } catch (err) {
       console.error(err);
@@ -262,6 +271,61 @@ export default function AdminDashboard() {
     try {
       await api.put('/announcement', announcement);
       toast.success('Announcement saved!');
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleCreateAd = async (e) => {
+    e.preventDefault();
+    if (!newAd.file) return toast.error('Please select an image for the ad.');
+    if (!newAd.caption) return toast.error('Caption is required.');
+
+    const formData = new FormData();
+    formData.append('image', newAd.file);
+    formData.append('caption', newAd.caption);
+    formData.append('link', newAd.link);
+    formData.append('slot', newAd.slot);
+
+    try {
+      const promise = api.post('/ads', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      toast.promise(promise, {
+        loading: 'Uploading Ad...',
+        success: 'Ad created successfully!',
+        error: (err) => err.response?.data?.message || err.message,
+      });
+
+      await promise;
+      setNewAd({ file: null, caption: '', link: '', slot: 'general' });
+      // clear file input
+      const fileInput = document.getElementById('adFile');
+      if (fileInput) fileInput.value = '';
+      
+      loadTab('Manage Ads');
+    } catch (err) {
+      // toast already handled
+    }
+  };
+
+  const handleToggleAd = async (id, currentStatus) => {
+    try {
+      await api.put(`/ads/${id}`, { isActive: !currentStatus });
+      toast.success('Ad status updated');
+      setAds(ads.map(ad => ad._id === id ? { ...ad, isActive: !currentStatus } : ad));
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleDeleteAd = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this ad?')) return;
+    try {
+      await api.delete(`/ads/${id}`);
+      toast.success('Ad deleted');
+      setAds(ads.filter(ad => ad._id !== id));
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
     }
@@ -671,6 +735,92 @@ export default function AdminDashboard() {
               <div className={`${announcement.backgroundColor} text-white px-4 py-2 text-center text-sm font-medium rounded-md`}>
                 {announcement.message}
               </div>
+            </div>
+          </div>
+        ) : tab === 'Manage Ads' ? (
+          <div className="space-y-8">
+            {/* Create Ad Form */}
+            <div className="card p-6 max-w-2xl">
+              <h2 className="text-xl font-semibold mb-4">Create Local Ad</h2>
+              <form onSubmit={handleCreateAd} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Ad Image</label>
+                  <input 
+                    type="file" 
+                    id="adFile"
+                    accept="image/*"
+                    onChange={(e) => setNewAd({...newAd, file: e.target.files[0]})}
+                    className="input w-full p-2"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Caption</label>
+                  <input 
+                    type="text" 
+                    value={newAd.caption} 
+                    onChange={(e) => setNewAd({...newAd, caption: e.target.value})} 
+                    className="input w-full"
+                    placeholder="e.g., Shree Ram Sweets - 10% Off"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Link (Optional)</label>
+                  <input 
+                    type="text" 
+                    value={newAd.link} 
+                    onChange={(e) => setNewAd({...newAd, link: e.target.value})} 
+                    className="input w-full"
+                    placeholder="https://..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Placement Slot</label>
+                  <select 
+                    value={newAd.slot}
+                    onChange={(e) => setNewAd({...newAd, slot: e.target.value})}
+                    className="input w-full"
+                  >
+                    <option value="general">General / Default</option>
+                    <option value="home_middle">Home Page Middle</option>
+                    <option value="explore_sidebar">Explore Page Sidebar</option>
+                  </select>
+                </div>
+                <button type="submit" className="btn-primary py-2 px-4">Upload Ad</button>
+              </form>
+            </div>
+
+            {/* Existing Ads */}
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Existing Ads</h2>
+              {ads.length === 0 ? (
+                <EmptyState title="No ads found" />
+              ) : (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {ads.map(ad => (
+                    <div key={ad._id} className="card overflow-hidden">
+                      <img src={ad.imageUrl} alt={ad.caption} className="h-40 w-full object-cover" />
+                      <div className="p-4">
+                        <p className="font-semibold line-clamp-1">{ad.caption}</p>
+                        <p className="text-xs text-ink-950/50 mt-1">Slot: {ad.slot}</p>
+                        <div className="mt-4 flex gap-2">
+                          <button 
+                            onClick={() => handleToggleAd(ad._id, ad.isActive)}
+                            className={`flex-1 py-1.5 text-xs font-medium rounded-lg border ${ad.isActive ? 'border-terracotta-500 text-terracotta-600 bg-terracotta-50' : 'border-ink-200 text-ink-600 bg-ink-50'}`}
+                          >
+                            {ad.isActive ? 'Active' : 'Inactive'}
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteAd(ad._id)}
+                            className="flex-1 py-1.5 text-xs font-medium rounded-lg border border-red-200 text-red-600 bg-red-50 hover:bg-red-100"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ) : null}

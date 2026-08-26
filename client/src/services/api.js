@@ -24,6 +24,32 @@ export const updateAnnouncement = async (data) => {
   return res.data;
 };
 
+// ==========================================
+// Local Ads
+// ==========================================
+
+export const getAds = async () => {
+  const res = await api.get('/ads');
+  return res.data;
+};
+
+export const createAd = async (formData) => {
+  const res = await api.post('/ads', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data;
+};
+
+export const updateAd = async (id, data) => {
+  const res = await api.put(`/ads/${id}`, data);
+  return res.data;
+};
+
+export const deleteAd = async (id) => {
+  const res = await api.delete(`/ads/${id}`);
+  return res.data;
+};
+
 // Normalizes error messages so components can just do err.message
 api.interceptors.response.use(
   (res) => res,
