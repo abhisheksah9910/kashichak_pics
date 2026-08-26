@@ -9,93 +9,74 @@ export default function Footer() {
     { 
       name: 'WHATSAPP', 
       icon: (props) => (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-          <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
-        </svg>
-      ), 
-      color: 'bg-[#25D366]', 
-      href: 'https://whatsapp.com/channel/0029VbDVZoFKLaHuZfj9mV1U' 
-    },
+  const socialLinks = [
+    { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/apna_kashichak/', hoverClass: 'hover:bg-pink-100 hover:text-pink-600 dark:hover:bg-pink-900/30 dark:hover:text-pink-400' },
+    { name: 'Facebook', icon: Facebook, href: 'https://www.facebook.com/kashichak/', hoverClass: 'hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900/30 dark:hover:text-blue-400' },
+    { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/@apnakashichak', hoverClass: 'hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400' }
   ];
 
   return (
-    <footer className="mt-24 border-t border-terracotta-100 dark:border-terracotta-900/40 bg-terracotta-50/50 dark:bg-ink-950 pb-8">
-      <div className="mx-auto max-w-7xl px-4 pt-10 sm:px-6 grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left items-center md:items-start">
+    <footer className="mt-24 border-t border-terracotta-100 dark:border-terracotta-900/40 bg-white dark:bg-ink-950">
+      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 flex flex-col items-center text-center">
         
-        {/* Brand & Socials */}
-        <div className="flex flex-col items-center md:items-start gap-6">
-          <Link to="/" className="flex items-center gap-2 font-display text-xl font-semibold text-terracotta-700 dark:text-terracotta-300">
-            <MapPin className="h-6 w-6" />
-            Apna Kashichak
-          </Link>
-          <p className="text-sm text-ink-950/60 dark:text-terracotta-50/60 max-w-xs">
-            Every place has a story. Join us in preserving the memories of our village for generations to come.
-          </p>
-          <div className="flex flex-wrap justify-center md:justify-start gap-2">
-          {badges.map((badge, idx) => {
-            const Icon = badge.icon;
+        {/* Brand Section */}
+        <Link to="/" className="flex items-center gap-2 font-display text-2xl font-bold text-terracotta-700 dark:text-terracotta-400 mb-4 transition-transform hover:scale-105">
+          <MapPin className="h-7 w-7" />
+          Apna Kashichak
+        </Link>
+        <p className="text-base text-ink-950/60 dark:text-terracotta-50/60 max-w-md mb-8">
+          Hamara gaon, hamari yaadein. Ek chhoti si koshish gaon ki khoobsurati ko hamesha ke liye sanjone ki.
+        </p>
+
+        {/* Social Links */}
+        <div className="flex gap-4 mb-12">
+          {socialLinks.map((social, idx) => {
+            const Icon = social.icon;
             return (
               <a 
-                key={idx}
-                href={badge.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex flex-1 sm:flex-none justify-center items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold tracking-wider text-white transition hover:opacity-80 hover:scale-105 transform rounded-sm ${badge.color} ${badge.text || ''}`}
+                key={idx} 
+                href={social.href} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label={social.name}
+                className={`p-3 rounded-2xl bg-terracotta-50 dark:bg-terracotta-900/20 text-terracotta-600 dark:text-terracotta-400 transition-all duration-300 ${social.hoverClass}`}
               >
-                <Icon className="h-4 w-4 shrink-0" />
-                <span className="whitespace-nowrap">{badge.name}</span>
+                <Icon className="h-5 w-5" />
               </a>
             );
           })}
-          </div>
         </div>
 
-        {/* Quick Links */}
-        <div className="flex flex-col items-center md:items-start gap-4">
-          <h4 className="font-semibold text-terracotta-900 dark:text-terracotta-100">Quick Links</h4>
-          <nav className="flex flex-col gap-2">
-            <Link to="/explore" className="text-sm text-ink-950/70 dark:text-terracotta-50/70 hover:text-terracotta-600 dark:hover:text-terracotta-400 transition-colors flex items-center gap-2">
-              <Compass className="h-4 w-4" /> Explore Places
-            </Link>
-            <Link to="/upload" className="text-sm text-ink-950/70 dark:text-terracotta-50/70 hover:text-terracotta-600 dark:hover:text-terracotta-400 transition-colors flex items-center gap-2">
-              <PlusSquare className="h-4 w-4" /> Share a Memory
-            </Link>
-            <a href="https://github.com/abhisheksah9910/kashichak_pics" target="_blank" rel="noopener noreferrer" className="text-sm text-ink-950/70 dark:text-terracotta-50/70 hover:text-terracotta-600 dark:hover:text-terracotta-400 transition-colors flex items-center gap-2">
-              Source Code
-            </a>
-          </nav>
-        </div>
+        {/* Divider */}
+        <div className="w-24 h-1 bg-terracotta-200 dark:bg-terracotta-900/50 rounded-full mb-12"></div>
 
-        {/* Developer Info */}
-        <div className="flex flex-col items-center md:items-start gap-4">
-          <h4 className="font-semibold text-terracotta-900 dark:text-terracotta-100">Created By</h4>
+        {/* Developer Credit */}
+        <div className="flex flex-col items-center gap-3 mb-8">
+          <p className="text-sm font-medium text-ink-950/50 dark:text-terracotta-50/50 flex items-center gap-1.5">
+            Made with <Heart className="h-4 w-4 text-red-500 fill-red-500 animate-pulse" /> by
+          </p>
           <a 
             href="https://www.instagram.com/its_abhisheek/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-3 bg-white dark:bg-terracotta-900/20 px-5 py-2 rounded-full border border-terracotta-100 dark:border-terracotta-900/40 shadow-sm transition hover:scale-105 hover:shadow-md cursor-pointer"
+            className="group flex items-center gap-3 bg-terracotta-50/50 dark:bg-terracotta-900/10 px-6 py-2.5 rounded-full border border-terracotta-100/50 dark:border-terracotta-900/30 hover:border-terracotta-300 dark:hover:border-terracotta-700 transition-all duration-300"
           >
             <img 
               src="/profile.jpg" 
-              alt="Developer" 
-              className="h-10 w-10 rounded-full object-cover"
+              alt="Abhishek Kumar" 
+              className="h-8 w-8 rounded-full object-cover ring-2 ring-transparent group-hover:ring-terracotta-400 transition-all"
             />
-            <div className="flex flex-col text-left">
-              <span className="text-[10px] font-medium text-ink-950/50 dark:text-terracotta-50/50 uppercase tracking-widest">Developer</span>
-              <span className="text-sm font-bold text-terracotta-700 dark:text-terracotta-300">Abhishek Kumar</span>
-            </div>
+            <span className="text-sm font-bold text-terracotta-800 dark:text-terracotta-200 group-hover:text-terracotta-600 dark:group-hover:text-terracotta-400 transition-colors">
+              Abhishek Kumar
+            </span>
           </a>
         </div>
 
-      </div>
-        
-      {/* Copyright */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="w-full mt-12 pt-6 border-t border-terracotta-100 dark:border-terracotta-900/40 flex justify-center">
-          <p className="text-center text-xs text-ink-950/40 dark:text-terracotta-50/40">
-            © {new Date().getFullYear()} Apna Kashichak. Every place has a story.
-          </p>
-        </div>
+        {/* Copyright */}
+        <p className="text-xs text-ink-950/40 dark:text-terracotta-50/40">
+          © {new Date().getFullYear()} Apna Kashichak. Sabhi adhikar surakshit hain.
+        </p>
+
       </div>
     </footer>
   );
