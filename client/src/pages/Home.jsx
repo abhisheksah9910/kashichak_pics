@@ -55,6 +55,18 @@ const TypewriterText = ({ texts, typingSpeed = 80, deletingSpeed = 40, pause = 2
   );
 };
 
+const AnimatedDivider = () => (
+  <div className="flex justify-center w-full my-4 opacity-60">
+    <div className="h-[2px] w-full max-w-5xl bg-gradient-to-r from-transparent via-terracotta-500/50 to-transparent relative overflow-hidden">
+      <motion.div
+        animate={{ x: ["-100%", "300%"] }}
+        transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+        className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-orange-300 to-transparent opacity-80"
+      />
+    </div>
+  </div>
+);
+
 export default function Home() {
   const [places, setPlaces] = useState([]);
   const [memories, setMemories] = useState([]);
@@ -106,6 +118,8 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      <AnimatedDivider />
 
       {/* Popular places */}
       <motion.section 
@@ -165,6 +179,8 @@ export default function Home() {
         </section>
       )}
 
+      <AnimatedDivider />
+
       {/* Latest memories */}
       <motion.section 
         initial={{ opacity: 0, y: 30 }}
@@ -186,6 +202,8 @@ export default function Home() {
           </div>
         )}
       </motion.section>
+
+      <AnimatedDivider />
 
       {/* Top Contributors */}
       <section className="bg-terracotta-50/30 dark:bg-terracotta-950/5 py-16">
