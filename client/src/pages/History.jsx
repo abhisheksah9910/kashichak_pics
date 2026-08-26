@@ -63,13 +63,13 @@ export default function History() {
         ) : memories.length > 0 ? (
           <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
             {memories
-              .filter(m => filter === 'all' || (filter === 'photo' ? m.mediaType === 'image' : m.mediaType === 'video'))
+              .filter(m => filter === 'all' || (filter === 'photo' ? m.mediaType === 'photo' : m.mediaType === 'video'))
               .map((memory) => (
               <div key={memory._id} className="break-inside-avoid">
                 <MemoryCard memory={memory} />
               </div>
             ))}
-            {memories.filter(m => filter === 'all' || (filter === 'photo' ? m.mediaType === 'image' : m.mediaType === 'video')).length === 0 && (
+            {memories.filter(m => filter === 'all' || (filter === 'photo' ? m.mediaType === 'photo' : m.mediaType === 'video')).length === 0 && (
               <div className="col-span-full py-12 text-center text-ink-950/50 dark:text-terracotta-50/50">
                 No {filter}s found.
               </div>
