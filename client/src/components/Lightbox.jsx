@@ -4,8 +4,9 @@ import { X, ChevronLeft, ChevronRight, Heart, Flag, MessageCircle, Share2 } from
 import toast from 'react-hot-toast';
 import api from '../services/api';
 
-export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext, onLike, onReport, onDelete, onEdit }) {
+export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext, onLike, onReport, onDelete, onEdit, onSetCover }) {
     const isOwnerOrAdmin = currentUser && (currentUser.role === 'admin' || currentUser._id === (memory.uploader?._id || memory.uploader));
+    const isAdmin = currentUser?.role === 'admin';
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [loadingComments, setLoadingComments] = useState(false);
@@ -130,6 +131,11 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
                                     <button onClick={onEdit} className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20">Edit</button>
                                     <button onClick={onDelete} className="flex items-center gap-1.5 rounded-full bg-red-500/80 px-3 py-1.5 text-xs text-white hover:bg-red-500">Delete</button>
                                 </>
+                            )}
+                            {isAdmin && onSetCover && (
+                                <button onClick={onSetCover} className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 border border-white/20">
+                                    Set as Cover
+                                </button>
                             )}
                         </div>
                     </div>

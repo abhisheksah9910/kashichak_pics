@@ -90,6 +90,16 @@ export default function PlaceDetails() {
     }
   };
 
+  const handleSetCover = async (mediaUrl) => {
+    try {
+      await api.put(`/places/${place._id}`, { coverImage: mediaUrl });
+      toast.success('Place cover photo updated successfully.');
+      setPlace({ ...place, coverImage: mediaUrl });
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
+
   const handleShare = async () => {
     const shareData = {
       title: place.name,
@@ -249,6 +259,7 @@ export default function PlaceDetails() {
           onReport={() => handleReport(memories[lightboxIndex]._id)}
           onDelete={() => handleDeleteMemory(memories[lightboxIndex]._id)}
           onEdit={() => handleEditMemory(memories[lightboxIndex])}
+          onSetCover={() => handleSetCover(memories[lightboxIndex].mediaUrl)}
         />
       )}
     </div>
