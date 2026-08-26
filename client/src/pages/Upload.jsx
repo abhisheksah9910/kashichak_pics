@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Search, MapPin, UploadCloud, X, CheckCircle2, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Search, MapPin, UploadCloud, X, CheckCircle2, ArrowLeft, ArrowRight, Archive } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 

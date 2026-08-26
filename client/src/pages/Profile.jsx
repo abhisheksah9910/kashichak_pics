@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
-import { CheckCircle2, Clock, XCircle, MapPin } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, MapPin, LogOut, ShieldCheck } from 'lucide-react';
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
+  const navigate = useNavigate();
   const [memories, setMemories] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +34,11 @@ export default function Profile() {
     rejected: 'text-red-600 dark:text-red-400',
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   const filteredMemories = activeFilter === 'all'
     ? memories
     : memories.filter((m) => m.status === activeFilter);
@@ -39,13 +46,32 @@ export default function Profile() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-terracotta-100 font-display text-2xl font-semibold text-terracotta-700 dark:bg-terracotta-900/40 dark:text-terracotta-300">
-          {user?.name?.[0]?.toUpperCase()}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-terracotta-100 font-display text-2xl font-semibold text-terracotta-700 dark:bg-terracotta-900/40 dark:text-terracotta-300">
+            {user?.name?.[0]?.toUpperCase()}
+          </div>
+          <div>
+            <h1 className="font-display text-2xl font-semibold">{user?.name}</h1>
+            <p className="text-sm text-ink-950/50 dark:text-terracotta-50/50">{user?.email}</p>
+          </div>
         </div>
-        <div>
-          <h1 className="font-display text-2xl font-semibold">{user?.name}</h1>
-          <p className="text-sm text-ink-950/50 dark:text-terracotta-50/50">{user?.email}</p>
+        
+        {/* Actions (mobile-friendly since they are hidden in main navbar) */}
+        <div className="flex flex-wrap items-center gap-3">
+          {isAdmin && (
+            <Link to="/admin" className="flex items-center gap-2 rounded-lg bg-terracotta-100 px-4 py-2 text-sm font-medium text-terracotta-700 hover:bg-terracotta-200 dark:bg-terracotta-900/40 dark:text-terracotta-300 dark:hover:bg-terracotta-900/60 transition-colors">
+              <ShieldCheck className="h-4 w-4" />
+              Admin Dashboard
+            </Link>
+          )}
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-2 rounded-lg border border-terracotta-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-terracotta-800 dark:text-red-400 dark:hover:bg-red-950/30 transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
         </div>
       </div>
 
