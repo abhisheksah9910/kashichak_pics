@@ -15,23 +15,39 @@ const steps = [
   { icon: Archive, title: 'Preserve it forever (हमेशा के लिए संजोएँ)', text: 'It joins the place\'s living timeline.' },
 ];
 
-const TypewriterText = ({ text }) => {
+const TypewriterText = ({ texts, typingSpeed = 80, deletingSpeed = 40, pause = 2500 }) => {
   const [displayedText, setDisplayedText] = useState("");
-  
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0);
+
   useEffect(() => {
-    setDisplayedText("");
-    let i = 0;
-    const interval = setInterval(() => {
-      setDisplayedText(text.slice(0, i + 1));
-      i++;
-      if (i > text.length) clearInterval(interval);
-    }, 80);
-    return () => clearInterval(interval);
-  }, [text]);
+    let timer;
+    const current = loopNum % texts.length;
+    const fullText = texts[current];
+
+    if (isDeleting) {
+      timer = setTimeout(() => {
+        setDisplayedText(fullText.substring(0, displayedText.length - 1));
+      }, deletingSpeed);
+    } else {
+      timer = setTimeout(() => {
+        setDisplayedText(fullText.substring(0, displayedText.length + 1));
+      }, typingSpeed);
+    }
+
+    if (!isDeleting && displayedText === fullText) {
+      timer = setTimeout(() => setIsDeleting(true), pause);
+    } else if (isDeleting && displayedText === '') {
+      setIsDeleting(false);
+      setLoopNum(loopNum + 1);
+    }
+
+    return () => clearTimeout(timer);
+  }, [displayedText, isDeleting, loopNum, texts, typingSpeed, deletingSpeed, pause]);
 
   return (
     <>
-      <span className="bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent py-2 leading-normal">
+      <span className="font-mono bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent py-2 leading-normal">
         {displayedText}
       </span>
       <motion.span 
@@ -53,16 +69,8 @@ export default function Home() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [featured, setFeatured] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isHindi, setIsHindi] = useState(false);
   const navigate = useNavigate();
   const debounceRef = useRef(null);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsHindi((prev) => !prev);
-    }, 4500); // Wait 4.5s so typing finishes
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -109,8 +117,8 @@ export default function Home() {
         </div>
         
         <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32 flex flex-col justify-center min-h-[350px]">
-          <h1 className="font-display text-4xl sm:text-6xl font-bold leading-normal tracking-tight min-h-[120px] sm:min-h-[160px] flex items-center justify-center drop-shadow-xl">
-            <TypewriterText text={!isHindi ? "Welcome to Apna Kashichak" : "अपना काशीचक में आपका स्वागत है"} />
+          <h1 className="font-display text-3xl sm:text-5xl font-bold leading-normal tracking-tight min-h-[120px] sm:min-h-[160px] flex items-center justify-center drop-shadow-xl">
+            <TypewriterText texts={["Welcome to Apna Kashichak", "अपना काशीचक में आपका स्वागत है"]} />
           </h1>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}

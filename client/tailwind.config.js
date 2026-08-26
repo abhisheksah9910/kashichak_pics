@@ -7,6 +7,7 @@ export default {
       fontFamily: {
         display: ['"Fraunces"', 'serif'],
         sans: ['"Inter"', 'sans-serif'],
+        mono: ['"Fira Code"', 'monospace'],
       },
       colors: {
         terracotta: {
