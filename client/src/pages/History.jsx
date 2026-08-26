@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Archive } from 'lucide-react';
+import { Archive, Image as ImageIcon, Video } from 'lucide-react';
 import api from '../services/api';
 import MemoryCard from '../components/MemoryCard';
 import { GridSkeleton } from '../components/Loader';
@@ -8,6 +8,7 @@ import EmptyState from '../components/EmptyState';
 export default function History() {
   const [memories, setMemories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -37,15 +38,50 @@ export default function History() {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+        {/* Filters */}
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-5 py-2 rounded-full text-sm font-medium transition ${
+              filter === 'all' ? 'bg-terracotta-600 text-white' : 'bg-terracotta-100 text-terracotta-700 dark:bg-terracotta-900/40 dark:text-terracotta-300 dark:hover:bg-terracotta-900/60 hover:bg-terracotta-200'
+            }`}
+          >
+            All Memories
+          </button>
+          <button
+            onClick={() => setFilter('photo')}
+            className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition ${
+              filter === 'photo' ? 'bg-terracotta-600 text-white' : 'bg-terracotta-100 text-terracotta-700 dark:bg-terracotta-900/40 dark:text-terracotta-300 dark:hover:bg-terracotta-900/60 hover:bg-terracotta-200'
+            }`}
+          >
+            <ImageIcon className="h-4 w-4" /> Photos
+          </button>
+          <button
+            onClick={() => setFilter('video')}
+            className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition ${
+              filter === 'video' ? 'bg-terracotta-600 text-white' : 'bg-terracotta-100 text-terracotta-700 dark:bg-terracotta-900/40 dark:text-terracotta-300 dark:hover:bg-terracotta-900/60 hover:bg-terracotta-200'
+            }`}
+          >
+            <Video className="h-4 w-4" /> Videos
+          </button>
+        </div>
+
         {loading ? (
           <GridSkeleton count={6} />
         ) : memories.length > 0 ? (
-          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [&>div:not(:first-child)]:mt-4">
-            {memories.map((memory) => (
+          <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
+            {memories
+              .filter(m => filter === 'all' || (filter === 'photo' ? m.mediaType === 'image' : m.mediaType === 'video'))
+              .map((memory) => (
               <div key={memory._id} className="break-inside-avoid">
                 <MemoryCard memory={memory} />
               </div>
             ))}
+            {memories.filter(m => filter === 'all' || (filter === 'photo' ? m.mediaType === 'image' : m.mediaType === 'video')).length === 0 && (
+              <div className="col-span-full py-12 text-center text-ink-950/50 dark:text-terracotta-50/50">
+                No {filter}s found.
+              </div>
+            )}
           </div>
         ) : (
           <EmptyState 
