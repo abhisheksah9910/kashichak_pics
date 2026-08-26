@@ -83,7 +83,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-terracotta-100 dark:border-terracotta-900/40 bg-white/80 dark:bg-ink-950/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-terracotta-100 dark:border-terracotta-900/40 bg-white/70 dark:bg-ink-950/70 backdrop-blur-lg shadow-sm transition-colors duration-300">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-2 font-display text-xl font-semibold text-terracotta-700 dark:text-terracotta-300">
           <Landmark className="h-6 w-6" />

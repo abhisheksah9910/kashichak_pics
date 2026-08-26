@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { GridSkeleton } from '../components/Loader';
@@ -44,7 +45,12 @@ export default function Profile() {
     : memories.filter((m) => m.status === activeFilter);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="mx-auto max-w-5xl px-4 py-12 sm:px-6"
+    >
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
@@ -83,12 +89,18 @@ export default function Profile() {
             { label: 'Approved', value: stats.approvedUploads, icon: CheckCircle2 },
             { label: 'Pending', value: stats.pendingUploads, icon: Clock },
             { label: 'Rejected', value: stats.rejectedUploads, icon: XCircle },
-          ].map((s) => (
-            <div key={s.label} className="card p-4 text-center">
+          ].map((s, i) => (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: i * 0.1 }}
+              key={s.label} 
+              className="card p-4 text-center"
+            >
               <s.icon className="mx-auto h-5 w-5 text-terracotta-500" />
               <p className="mt-2 text-2xl font-semibold">{s.value}</p>
               <p className="text-xs text-ink-950/50 dark:text-terracotta-50/50">{s.label}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
@@ -123,10 +135,16 @@ export default function Profile() {
           />
         ) : (
           <div className="space-y-3">
-            {filteredMemories.map((m) => {
+            {filteredMemories.map((m, i) => {
               const Icon = statusIcon[m.status] || Clock;
               return (
-                <div key={m._id} className="card flex items-center gap-4 p-4">
+                <motion.div 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.05 }}
+                  key={m._id} 
+                  className="card flex items-center gap-4 p-4"
+                >
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-terracotta-100 dark:bg-terracotta-900/30">
                     <img
                       src={m.thumbnailUrl || m.mediaUrl}
@@ -146,12 +164,12 @@ export default function Profile() {
                     <Icon className="h-4 w-4" />
                     {m.status}
                   </span>
-                </div>
+                </motion.div>
               );
             })}
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

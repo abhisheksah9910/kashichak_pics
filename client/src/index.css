@@ -36,6 +36,18 @@
   }
 
   .skeleton {
-    @apply animate-pulse rounded-xl bg-terracotta-100 dark:bg-terracotta-900/30;
+    @apply relative overflow-hidden rounded-xl bg-terracotta-100 dark:bg-terracotta-900/30;
+  }
+  
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent dark:via-white/5;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
   }
 }

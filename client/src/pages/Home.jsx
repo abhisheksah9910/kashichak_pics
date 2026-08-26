@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Search, Compass, UploadCloud, MapPin, Camera, PenLine, Archive, Trophy } from 'lucide-react';
 import api from '../services/api';
 import PlaceCard from '../components/PlaceCard';
@@ -62,21 +63,42 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-terracotta-50 to-white dark:from-ink-950 dark:to-ink-950">
-        <div className="mx-auto max-w-5xl px-4 py-20 text-center sm:px-6">
-          <h1 className="font-display text-4xl font-semibold leading-tight sm:text-6xl">
+      <section className="relative overflow-hidden bg-ink-950 text-white">
+        {/* Animated subtle background blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 8, repeat: Infinity }} className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-terracotta-600/30 blur-[100px]" />
+          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 10, repeat: Infinity, delay: 1 }} className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-orange-600/20 blur-[120px]" />
+        </div>
+        
+        <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="font-display text-5xl font-semibold leading-tight sm:text-7xl"
+          >
             Every Place Has a Story.
             <br />
-            <span className="text-terracotta-600 dark:text-terracotta-400">हर जगह की एक कहानी है।</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base text-ink-950/70 dark:text-terracotta-50/70 sm:text-lg">
+            <span className="bg-gradient-to-r from-terracotta-400 to-orange-400 bg-clip-text text-transparent">हर जगह की एक कहानी है।</span>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mx-auto mt-6 max-w-2xl text-base text-white/70 sm:text-lg"
+          >
             Apna Kashichak is a community archive where we preserve photos and videos of the places we call home. <br className="hidden sm:block" /> 
-            <span className="mt-1 block text-sm font-medium">यह हमारा अपना काशीचक है, जहाँ हम अपनी पुरानी यादें संजोते हैं।</span>
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link to="/explore" className="btn-primary"><Compass className="h-4 w-4" /> Explore (जगहें खोजें)</Link>
-            <Link to="/upload" className="btn-secondary"><UploadCloud className="h-4 w-4" /> Share Memory (यादें साझा करें)</Link>
-          </div>
+            <span className="mt-1 block text-sm font-medium text-terracotta-300">यह हमारा अपना काशीचक है, जहाँ हम अपनी पुरानी यादें संजोते हैं।</span>
+          </motion.p>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+          >
+            <Link to="/explore" className="btn-primary shadow-terracotta-600/20 shadow-lg"><Compass className="h-4 w-4" /> Explore (जगहें खोजें)</Link>
+            <Link to="/upload" className="btn-secondary !bg-white/10 !border-white/20 !text-white hover:!bg-white/20"><UploadCloud className="h-4 w-4" /> Share Memory (यादें साझा करें)</Link>
+          </motion.div>
 
           {/* Search */}
           <div className="relative mx-auto mt-12 max-w-xl">
@@ -131,7 +153,13 @@ export default function Home() {
       </section>
 
       {/* Popular places */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <motion.section 
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="mx-auto max-w-7xl px-4 py-16 sm:px-6"
+      >
         <div className="mb-8 flex items-end justify-between">
           <h2 className="font-display text-2xl font-semibold sm:text-3xl">Popular Places</h2>
           <Link to="/explore" className="text-sm font-medium text-terracotta-600 hover:underline">View all</Link>
@@ -145,7 +173,7 @@ export default function Home() {
             {places.map((p) => <PlaceCard key={p._id} place={p} />)}
           </div>
         )}
-      </section>
+      </motion.section>
 
       {/* Featured memory */}
       {featured && (
@@ -183,20 +211,26 @@ export default function Home() {
       )}
 
       {/* Latest memories */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+      <motion.section 
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.6 }}
+        className="mx-auto max-w-7xl px-4 py-16 sm:px-6"
+      >
         <h2 className="mb-8 font-display text-2xl font-semibold sm:text-3xl">Latest Memories</h2>
         {loading ? (
           <GridSkeleton count={8} />
         ) : memories.length === 0 ? (
           <EmptyState title="No memories have been shared yet" message="Be the first to preserve one." />
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
             {memories.map((m) => (
               <MemoryCard key={m._id} memory={m} onClick={() => navigate(`/places/${m.place?.slug}`)} />
             ))}
           </div>
         )}
-      </section>
+      </motion.section>
 
       {/* Top Contributors */}
       <section className="bg-terracotta-50/30 dark:bg-terracotta-950/5 py-16">
