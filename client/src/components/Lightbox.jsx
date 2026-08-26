@@ -54,6 +54,15 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
         }
     };
 
+    const handleWhatsAppShare = () => {
+        const text = encodeURIComponent(`Check out this memory on Apna Kashichak! ${window.location.href}`);
+        window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    };
+
+    const handleFacebookShare = () => {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+    };
+
     return (
         /* Full screen overlay */
         <div className="fixed inset-0 z-[100] bg-black/95 flex items-end md:items-center md:justify-center md:p-4" onClick={onClose}>
@@ -125,6 +134,12 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
                             </button>
                             <button onClick={handleShare} className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20">
                                 <Share2 className="h-3.5 w-3.5" /> Share
+                            </button>
+                            <button onClick={handleWhatsAppShare} className="flex items-center gap-1.5 rounded-full bg-green-500/20 border border-green-500/30 px-3 py-1.5 text-xs text-green-400 hover:bg-green-500/30">
+                                WhatsApp
+                            </button>
+                            <button onClick={handleFacebookShare} className="flex items-center gap-1.5 rounded-full bg-blue-500/20 border border-blue-500/30 px-3 py-1.5 text-xs text-blue-400 hover:bg-blue-500/30">
+                                Facebook
                             </button>
                             {isOwnerOrAdmin && (
                                 <>

@@ -14,13 +14,13 @@ import {
 import api from '../services/api';
 import EmptyState from '../components/EmptyState';
 import { Spinner } from '../components/Loader';
+import { useAuth } from '../context/AuthContext';
 
-const TABS = [
+const ALL_TABS = [
   'Overview',
   'Pending Uploads',
   'Place Suggestions',
   'Reports',
-  'Manage Places',
   'Manage Places',
   'Manage Memories',
   'Announcements',
@@ -28,7 +28,9 @@ const TABS = [
 ];
 
 export default function AdminDashboard() {
-  const [tab, setTab] = useState('Overview');
+  const { user } = useAuth();
+  const tabs = user?.role === 'admin' ? ALL_TABS : ['Overview', 'Reports', 'Manage Memories', 'Pending Uploads'];
+  const [tab, setTab] = useState(tabs[0]);
   const [overview, setOverview] = useState(null);
   const [pending, setPending] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
@@ -374,7 +376,7 @@ export default function AdminDashboard() {
 
       {/* Tabs */}
       <div className="mt-6 flex flex-wrap gap-2 border-b border-terracotta-100 dark:border-terracotta-900/40">
-        {TABS.map((currentTab) => (
+        {tabs.map((currentTab) => (
           <button
             key={currentTab}
             onClick={() => setTab(currentTab)}

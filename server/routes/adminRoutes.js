@@ -6,12 +6,11 @@ const {
   rejectMemory,
   featureMemory,
 } = require('../controllers/adminController');
-const { protect } = require('../middleware/auth');
-const { adminOnly } = require('../middleware/admin');
+const { protect, adminOrModerator } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.use(protect, adminOnly);
+router.use(protect, adminOrModerator);
 
 router.get('/overview', getOverview);
 router.get('/memories/pending', getPendingMemories);

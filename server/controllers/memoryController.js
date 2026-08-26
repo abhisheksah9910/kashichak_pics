@@ -5,6 +5,7 @@ const driveService = require('../services/googleDriveService');
 const sharp = require('sharp');
 const { success, error } = require('../utils/apiResponse');
 const { ALLOWED_IMAGE_TYPES, MAX_IMAGE_MB, MAX_VIDEO_MB } = require('../middleware/upload');
+const { sendPushToUser } = require('../services/webPushService');
 
 const listMemories = async (req, res, next) => {
   try {
@@ -259,6 +260,14 @@ const toggleLike = async (req, res, next) => {
         message: `${req.user.name || 'Someone'} liked your memory.`,
         relatedMemory: memory._id,
       });
+
+      // Send push notification
+      await sendPushToUser(memory.uploader, {
+        title: 'New Like! ❤️',
+        body: `${req.user.name || 'Someone'} liked your photo.`,
+        url: `/places/${memory.place}`,
+        icon: req.user.profileImage || '/pwa-192x192.png'
+      });
     }
 
     return success(res, 200, 'Memory liked.', { liked: true, likeCount: memory.likeCount });
@@ -319,6 +328,14 @@ const addComment = async (req, res, next) => {
         type: 'memory_commented',
         message: `${req.user.name || 'Someone'} commented on your memory.`,
         relatedMemory: memory._id,
+      });
+
+      // Send push notification
+      await sendPushToUser(memory.uploader, {
+        title: 'New Comment! 💬',
+        body: `${req.user.name || 'Someone'} commented: "${text.substring(0, 30)}${text.length > 30 ? '...' : ''}"`,
+        url: `/places/${memory.place}`,
+        icon: req.user.profileImage || '/pwa-192x192.png'
       });
     }
 

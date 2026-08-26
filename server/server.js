@@ -26,6 +26,7 @@ const suggestionRoutes = require('./routes/suggestionRoutes');
 const placeSuggestionRoutes = require('./routes/placeSuggestionRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const pushRoutes = require('./routes/pushRoutes');
 require('./cron/cleanup');
 
 const app = express();
@@ -136,6 +137,7 @@ app.use('/api/places', placeRoutes);
 app.use('/api/memories', memoryRoutes);
 app.use('/api/announcement', announcementRoutes);
 app.use('/api/ads', adRoutes);
+app.use('/api/push', pushRoutes);
 
 app.use('/api/place-suggestions', placeSuggestionRoutes);
 app.use('/api/admin/suggestions', suggestionRoutes);

@@ -5,7 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
-import { CheckCircle2, Clock, XCircle, MapPin, LogOut, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, MapPin, LogOut, ShieldCheck, Bell } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function Profile() {
   const { user, logout, isAdmin } = useAuth();
@@ -44,6 +45,41 @@ export default function Profile() {
     ? memories
     : memories.filter((m) => m.status === activeFilter);
 
+  const urlBase64ToUint8Array = (base64String) => {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  };
+
+  const handleEnableNotifications = async () => {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      return toast.error('Push notifications are not supported by your browser.');
+    }
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') return toast.error('Notification permission denied.');
+      
+      const vapidRes = await api.get('/push/vapid-public-key');
+      const registration = await navigator.serviceWorker.ready;
+      
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidRes.data.publicKey)
+      });
+
+      await api.post('/push/subscribe', subscription);
+      toast.success('Push notifications enabled!');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to enable notifications.');
+    }
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -71,6 +107,13 @@ export default function Profile() {
               Admin Dashboard
             </Link>
           )}
+          <button 
+            onClick={handleEnableNotifications}
+            className="flex items-center gap-2 rounded-lg bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60 transition-colors"
+          >
+            <Bell className="h-4 w-4" />
+            Enable Notifications
+          </button>
           <button 
             onClick={handleLogout}
             className="flex items-center gap-2 rounded-lg border border-terracotta-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-terracotta-800 dark:text-red-400 dark:hover:bg-red-950/30 transition-colors"

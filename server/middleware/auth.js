@@ -39,4 +39,13 @@ const attachUserIfPresent = async (req, _res, next) => {
   }
 };
 
-module.exports = { protect, attachUserIfPresent };
+// Ensure user is admin or moderator
+const adminOrModerator = (req, res, next) => {
+  if (req.user && (req.user.role === 'admin' || req.user.role === 'moderator')) {
+    next();
+  } else {
+    return error(res, 403, 'Not authorized as admin or moderator.');
+  }
+};
+
+module.exports = { protect, attachUserIfPresent, adminOrModerator };
