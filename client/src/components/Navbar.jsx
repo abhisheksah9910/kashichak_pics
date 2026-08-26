@@ -96,7 +96,7 @@ export default function Navbar() {
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
-      toast('App is already installed, or not supported on this browser!', { icon: 'ℹ️' });
+      toast('Install not ready! Please use the browser menu (3 dots) -> "Install App" or refresh the page.', { icon: 'ℹ️', duration: 5000 });
       return;
     }
     deferredPrompt.prompt();
