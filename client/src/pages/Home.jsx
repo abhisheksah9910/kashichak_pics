@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Compass, UploadCloud, MapPin, Camera, PenLine, Archive, Trophy } from 'lucide-react';
 import api from '../services/api';
 import PlaceCard from '../components/PlaceCard';
@@ -23,8 +23,16 @@ export default function Home() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [featured, setFeatured] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isHindi, setIsHindi] = useState(false);
   const navigate = useNavigate();
   const debounceRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsHindi((prev) => !prev);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -70,24 +78,34 @@ export default function Home() {
           <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 10, repeat: Infinity, delay: 1 }} className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-orange-600/20 blur-[120px]" />
         </div>
         
-        <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32">
-          <motion.h1 
-            initial={{ opacity: 0, y: 40, filter: 'blur(12px)', scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="font-display text-5xl font-bold leading-tight sm:text-7xl tracking-tight"
-          >
-            Welcome to Apna Kashichak
-            <br />
-            <motion.span 
-              initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-3 block bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent sm:text-6xl text-4xl leading-tight"
-            >
-              अपना काशीचक में आपका स्वागत है
-            </motion.span>
-          </motion.h1>
+        <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32 h-[400px] flex flex-col justify-center">
+          <div className="h-32 sm:h-40 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              {!isHindi ? (
+                <motion.h1 
+                  key="english"
+                  initial={{ opacity: 0, y: 20, filter: 'blur(8px)', scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+                  exit={{ opacity: 0, y: -20, filter: 'blur(8px)', scale: 0.95 }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-display text-5xl font-bold leading-tight sm:text-7xl tracking-tight absolute"
+                >
+                  Welcome to Apna Kashichak
+                </motion.h1>
+              ) : (
+                <motion.h1 
+                  key="hindi"
+                  initial={{ opacity: 0, y: 20, filter: 'blur(8px)', scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
+                  exit={{ opacity: 0, y: -20, filter: 'blur(8px)', scale: 0.95 }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="font-display text-4xl sm:text-6xl font-bold leading-tight tracking-tight absolute bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent"
+                >
+                  अपना काशीचक में आपका स्वागत है
+                </motion.h1>
+              )}
+            </AnimatePresence>
+          </div>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
