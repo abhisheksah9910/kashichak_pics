@@ -117,9 +117,7 @@ export default function History() {
         ) : filteredMemories.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {filteredMemories.map((memory, idx) => (
-              <div key={memory._id}>
-                <MemoryCard memory={memory} onClick={() => setLightboxIndex(idx)} />
-              </div>
+              <MemoryCard key={memory._id} memory={memory} onClick={() => setLightboxIndex(idx)} />
             ))}
           </div>
         ) : (

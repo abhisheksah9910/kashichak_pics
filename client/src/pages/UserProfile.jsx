@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { GridSkeleton, Spinner } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
 import Lightbox from '../components/Lightbox';
+import MemoryCard from '../components/MemoryCard';
 
 export default function UserProfile() {
     const { id } = useParams();
@@ -128,26 +129,9 @@ export default function UserProfile() {
                 {memories.length === 0 ? (
                     <EmptyState title="No memories yet" message="This user hasn't shared any memories yet." />
                 ) : (
-                    <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                         {memories.map((m, idx) => (
-                            <button
-                                key={m._id}
-                                onClick={() => setLightboxIndex(idx)}
-                                className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl border border-terracotta-100 dark:border-terracotta-900/40 text-left shadow-soft"
-                            >
-                                <div className="relative">
-                                    <img src={m.thumbnailUrl || m.mediaUrl} alt={m.caption} loading="lazy" className="w-full object-cover transition duration-500 group-hover:scale-105" />
-                                    {m.mediaType === 'video' && (
-                                        <span className="absolute right-2 top-2 rounded-full bg-black/60 p-1.5 text-white">▶</span>
-                                    )}
-                                </div>
-                                <div className="p-3">
-                                    <p className="line-clamp-1 text-sm font-medium">{m.caption}</p>
-                                    <p className="mt-1 text-xs text-ink-950/50 dark:text-terracotta-50/50">
-                                        {m.place?.name} · {new Date(m.dateCaptured).toLocaleDateString()}
-                                    </p>
-                                </div>
-                            </button>
+                            <MemoryCard key={m._id} memory={m} onClick={() => setLightboxIndex(idx)} />
                         ))}
                     </div>
                 )}

@@ -14,7 +14,7 @@ export default function MemoryCard({ memory, onClick }) {
           <PlayCircle className="absolute inset-0 m-auto h-10 w-10 text-white drop-shadow-lg" />
         )}
       </div>
-      <div className="p-4">
+      <div className="p-4 flex-1 flex flex-col justify-between">
         <p className="line-clamp-2 text-sm font-medium">{memory.caption}</p>
         <div className="mt-2 flex items-center justify-between text-xs text-ink-950/50 dark:text-terracotta-50/50">
           <span>{memory.uploader?.name || 'Anonymous'}</span>

@@ -7,8 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { GridSkeleton, Spinner } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
 import Lightbox from '../components/Lightbox';
-
-const TABS = ['All', 'Photos', 'Videos', 'Timeline'];
+import MemoryCard from '../components/MemoryCard';
 
 export default function PlaceDetails() {
   const { slug } = useParams();
@@ -17,7 +16,7 @@ export default function PlaceDetails() {
   const [yearsCovered, setYearsCovered] = useState([]);
   const [memories, setMemories] = useState([]);
   const [timeline, setTimeline] = useState([]);
-  const [tab, setTab] = useState('All');
+  const [tab, setTab] = useState('Photos');
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState(null);
 
@@ -39,7 +38,7 @@ export default function PlaceDetails() {
       api.get('/memories/timeline', { params: { place: slug } }).then((res) => setTimeline(res.data.data));
     } else {
       const type = tab === 'Photos' ? 'photo' : tab === 'Videos' ? 'video' : undefined;
-      api.get('/memories', { params: { place: slug, type, limit: 40 } }).then((res) => setMemories(res.data.data));
+      api.get('/memories', { params: { place: slug, type, limit: 40, sort: 'newest_captured' } }).then((res) => setMemories(res.data.data));
     }
   }, [place, tab, slug]);
 
@@ -158,19 +157,31 @@ export default function PlaceDetails() {
         </div>
 
         {/* Tabs */}
-        <div className="mt-8 flex gap-2 border-b border-terracotta-100 dark:border-terracotta-900/40">
-          {TABS.map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`px-4 py-2.5 text-sm font-medium transition ${tab === t
-                ? 'border-b-2 border-terracotta-600 text-terracotta-600'
-                : 'text-ink-950/50 hover:text-terracotta-600 dark:text-terracotta-50/50'
-                }`}
-            >
-              {t}
-            </button>
-          ))}
+        <div className="mt-8 flex flex-wrap justify-center gap-3 border-b border-terracotta-100 dark:border-terracotta-900/40 pb-6">
+          <button
+            onClick={() => setTab('Photos')}
+            className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition ${
+              tab === 'Photos' ? 'bg-terracotta-600 text-white' : 'bg-terracotta-100 text-terracotta-700 dark:bg-terracotta-900/40 dark:text-terracotta-300 dark:hover:bg-terracotta-900/60 hover:bg-terracotta-200'
+            }`}
+          >
+            <Image className="h-4 w-4" /> Photos
+          </button>
+          <button
+            onClick={() => setTab('Videos')}
+            className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition ${
+              tab === 'Videos' ? 'bg-terracotta-600 text-white' : 'bg-terracotta-100 text-terracotta-700 dark:bg-terracotta-900/40 dark:text-terracotta-300 dark:hover:bg-terracotta-900/60 hover:bg-terracotta-200'
+            }`}
+          >
+            <Video className="h-4 w-4" /> Videos
+          </button>
+          <button
+            onClick={() => setTab('Timeline')}
+            className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition ${
+              tab === 'Timeline' ? 'bg-terracotta-600 text-white' : 'bg-terracotta-100 text-terracotta-700 dark:bg-terracotta-900/40 dark:text-terracotta-300 dark:hover:bg-terracotta-900/60 hover:bg-terracotta-200'
+            }`}
+          >
+            <CalendarClock className="h-4 w-4" /> Timeline
+          </button>
         </div>
 
         <div className="mt-8">
@@ -198,49 +209,9 @@ export default function PlaceDetails() {
           ) : memories.length === 0 ? (
             <EmptyState title="No memories have been shared from this place yet" message="Be the first to preserve one." action={<Link to="/upload" className="btn-primary">Share a Memory</Link>} />
           ) : (
-            <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {memories.map((m, idx) => (
-                <button
-                  key={m._id}
-                  onClick={() => setLightboxIndex(idx)}
-                  className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl border border-terracotta-100 dark:border-terracotta-900/40 text-left shadow-soft"
-                >
-                  <div className="relative">
-                    {m.mediaType === 'video' ? (
-                      <div className="relative w-full overflow-hidden">
-                        <img
-                          src={m.thumbnailUrl}
-                          alt={m.caption}
-                          loading="lazy"
-                          className="w-full object-cover transition duration-500 group-hover:scale-105"
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextElementSibling.style.display = 'flex';
-                          }}
-                        />
-                        <div className="aspect-[3/4] w-full items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800" style={{display:'none'}}>
-                          <span className="text-4xl text-white opacity-40">▶</span>
-                        </div>
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/25 transition group-hover:bg-black/40">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm transition duration-300 group-hover:scale-110 group-hover:bg-black/70">
-                            <span className="ml-1 text-lg text-white">▶</span>
-                          </div>
-                        </div>
-                        <span className="absolute bottom-2 left-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">Video</span>
-                      </div>
-                    ) : (
-                      <img src={m.thumbnailUrl || m.mediaUrl} alt={m.caption} loading="lazy" className="w-full object-cover transition duration-500 group-hover:scale-105" />
-                    )}
-                  </div>
-                  <div className="p-3">
-                    <p className="line-clamp-1 text-sm font-medium">{m.caption}</p>
-                    <p className="mt-1 text-xs text-ink-950/50 dark:text-terracotta-50/50">
-                      <Link to={`/profile/${m.uploader?._id || m.uploader}`} className="hover:underline" onClick={(e) => e.stopPropagation()}>
-                        {m.uploader?.name}
-                      </Link> · {new Date(m.dateCaptured).toLocaleDateString()}
-                    </p>
-                  </div>
-                </button>
+                <MemoryCard key={m._id} memory={m} onClick={() => setLightboxIndex(idx)} />
               ))}
             </div>
           )}
