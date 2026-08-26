@@ -14,6 +14,7 @@ export default function Upload() {
   const [submitting, setSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
+  const [currentFileIndex, setCurrentFileIndex] = useState(0);
 
   // Location
   const [placeQuery, setPlaceQuery] = useState('');
@@ -23,8 +24,8 @@ export default function Upload() {
   const [newPlace, setNewPlace] = useState({ name: '', state: '', district: '', area: '', description: '' });
 
   // Media
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [files, setFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const fileInputRef = useRef(null);
 
   // Details
@@ -58,43 +59,72 @@ export default function Upload() {
     }
   };
 
-  const handleFileSelect = (f) => {
-    if (!f) return;
-    const isImage = f.type.startsWith('image/');
-    const isVideo = f.type.startsWith('video/');
-    if (!isImage && !isVideo) return toast.error('Please choose an image or video file.');
-    const maxMB = isImage ? 15 : 100;
-    if (f.size > maxMB * 1024 * 1024) return toast.error(`File too large. Max ${maxMB}MB for this type.`);
-    setFile(f);
-    setPreview(URL.createObjectURL(f));
+  const handleFileSelect = (selectedFiles) => {
+    if (!selectedFiles || selectedFiles.length === 0) return;
+    
+    const newFiles = [];
+    const newPreviews = [];
+
+    Array.from(selectedFiles).forEach(f => {
+      const isImage = f.type.startsWith('image/');
+      const isVideo = f.type.startsWith('video/');
+      if (!isImage && !isVideo) {
+        toast.error(`${f.name} is not an image or video.`);
+        return;
+      }
+      const maxMB = isImage ? 15 : 100;
+      if (f.size > maxMB * 1024 * 1024) {
+        toast.error(`${f.name} is too large. Max ${maxMB}MB.`);
+        return;
+      }
+      newFiles.push(f);
+      newPreviews.push(URL.createObjectURL(f));
+    });
+
+    setFiles(prev => [...prev, ...newFiles]);
+    setPreviews(prev => [...prev, ...newPreviews]);
+  };
+
+  const removeFile = (index) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async () => {
     if (!selectedPlace && details.featuredLabel !== 'historical') return toast.error('Please select a place.');
-    if (!file) return toast.error('Please choose a photo or video.');
+    if (files.length === 0) return toast.error('Please choose at least one photo or video.');
     if (!details.caption || !details.dateCaptured) return toast.error('Caption and date captured are required.');
 
-    const formData = new FormData();
-    formData.append('media', file);
-    if (selectedPlace) formData.append('placeId', selectedPlace._id);
-    formData.append('caption', details.caption);
-    formData.append('story', details.story);
-    formData.append('dateCaptured', details.dateCaptured);
-    formData.append('tags', details.tags);
-    if (details.featuredLabel) formData.append('featuredLabel', details.featuredLabel);
+    setSubmitting(true);
+    let successCount = 0;
 
-    try {
-      setSubmitting(true);
-      await api.post('/memories', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: (evt) => setProgress(Math.round((evt.loaded / evt.total) * 100)),
-      });
-      setDone(true);
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setSubmitting(false);
+    for (let i = 0; i < files.length; i++) {
+      setCurrentFileIndex(i + 1);
+      setProgress(0);
+      
+      const f = files[i];
+      const formData = new FormData();
+      formData.append('media', f);
+      if (selectedPlace) formData.append('placeId', selectedPlace._id);
+      formData.append('caption', details.caption);
+      formData.append('story', details.story);
+      formData.append('dateCaptured', details.dateCaptured);
+      formData.append('tags', details.tags);
+      if (details.featuredLabel) formData.append('featuredLabel', details.featuredLabel);
+
+      try {
+        await api.post('/memories', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          onUploadProgress: (evt) => setProgress(Math.round((evt.loaded / evt.total) * 100)),
+        });
+        successCount++;
+      } catch (err) {
+        toast.error(`Failed to upload ${f.name}: ${err.message}`);
+      }
     }
+    
+    setSubmitting(false);
+    if (successCount > 0) setDone(true);
   };
 
   if (done) {
@@ -205,29 +235,45 @@ export default function Upload() {
 
         {step === 1 && (
           <div>
-            <h2 className="font-display text-lg font-semibold">Upload your photo or video</h2>
-            {!file ? (
+            <h2 className="font-display text-lg font-semibold">Upload your photos or videos</h2>
+            
+            {files.length > 0 && (
+              <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {previews.map((src, idx) => (
+                  <div key={idx} className="relative aspect-square overflow-hidden rounded-xl border border-terracotta-200 dark:border-terracotta-800 bg-black">
+                    {files[idx].type.startsWith('video/') ? (
+                      <video src={src} className="h-full w-full object-cover" />
+                    ) : (
+                      <img src={src} alt="preview" className="h-full w-full object-cover" />
+                    )}
+                    <button onClick={() => removeFile(idx)} className="absolute right-2 top-2 rounded-full bg-black/60 p-1.5 text-white shadow-sm" aria-label="Remove file">
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex aspect-square flex-col items-center justify-center rounded-xl border-2 border-dashed border-terracotta-300 dark:border-terracotta-800 text-terracotta-500 hover:bg-terracotta-50 dark:hover:bg-terracotta-900/20"
+                >
+                  <UploadCloud className="h-6 w-6" />
+                  <span className="mt-2 text-xs font-medium">Add More</span>
+                </button>
+              </div>
+            )}
+
+            {files.length === 0 && (
               <button
                 onClick={() => fileInputRef.current?.click()}
                 className="mt-4 flex w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-terracotta-300 dark:border-terracotta-800 py-16 text-terracotta-500 hover:bg-terracotta-50 dark:hover:bg-terracotta-900/20"
               >
                 <UploadCloud className="h-10 w-10" />
-                <p className="mt-3 text-sm font-medium">Click to choose a file</p>
+                <p className="mt-3 text-sm font-medium">Click to choose files</p>
                 <p className="mt-1 text-xs text-ink-950/40 dark:text-terracotta-50/40">JPG, PNG, WEBP up to 15MB · MP4, MOV, WEBM up to 100MB</p>
+                <p className="mt-1 text-xs text-terracotta-600 dark:text-terracotta-400 font-medium">You can select multiple files</p>
               </button>
-            ) : (
-              <div className="relative mt-4 overflow-hidden rounded-2xl border border-terracotta-200 dark:border-terracotta-800">
-                {file.type.startsWith('video/') ? (
-                  <video src={preview} controls className="max-h-80 w-full bg-black" />
-                ) : (
-                  <img src={preview} alt="preview" className="max-h-80 w-full object-contain bg-black" />
-                )}
-                <button onClick={() => { setFile(null); setPreview(null); }} className="absolute right-3 top-3 rounded-full bg-black/60 p-1.5 text-white" aria-label="Remove file">
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
             )}
-            <input ref={fileInputRef} type="file" accept="image/*,video/*" hidden onChange={(e) => handleFileSelect(e.target.files[0])} />
+            
+            <input ref={fileInputRef} type="file" accept="image/*,video/*" multiple hidden onChange={(e) => handleFileSelect(e.target.files)} />
           </div>
         )}
 
@@ -248,14 +294,16 @@ export default function Upload() {
               <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">Place</dt><dd className="font-medium">{details.featuredLabel === 'historical' ? 'History Archive' : selectedPlace?.name}</dd></div>
               <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">Caption</dt><dd className="font-medium">{details.caption}</dd></div>
               <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">Date captured</dt><dd className="font-medium">{details.dateCaptured}</dd></div>
-              <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">File</dt><dd className="font-medium">{file?.name}</dd></div>
+              <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">Files</dt><dd className="font-medium">{files.length} selected</dd></div>
             </dl>
             {submitting && (
               <div className="mt-4">
                 <div className="h-2 w-full overflow-hidden rounded-full bg-terracotta-100 dark:bg-terracotta-900/40">
                   <div className="h-full bg-terracotta-600 transition-all" style={{ width: `${progress}%` }} />
                 </div>
-                <p className="mt-1 text-xs text-ink-950/50 dark:text-terracotta-50/50">Uploading original quality file… {progress}%</p>
+                <p className="mt-1 text-xs text-ink-950/50 dark:text-terracotta-50/50">
+                  {files.length > 1 ? `Uploading file ${currentFileIndex} of ${files.length}… ${progress}%` : `Uploading… ${progress}%`}
+                </p>
               </div>
             )}
             <p className="mt-4 text-xs text-ink-950/50 dark:text-terracotta-50/50">
@@ -277,7 +325,7 @@ export default function Upload() {
             <button
               onClick={() => {
                 if (step === 0 && !selectedPlace && details.featuredLabel !== 'historical') return toast.error('Please select a place first.');
-                if (step === 1 && !file) return toast.error('Please choose a file first.');
+                if (step === 1 && files.length === 0) return toast.error('Please choose at least one file first.');
                 setStep((s) => Math.min(3, s + 1));
               }}
               className="btn-primary"
@@ -286,7 +334,7 @@ export default function Upload() {
             </button>
           ) : (
             <button onClick={handleSubmit} disabled={submitting} className="btn-primary">
-              {submitting ? 'Submitting…' : 'Submit Memory'}
+              {submitting ? 'Submitting…' : `Submit ${files.length > 1 ? 'Memories' : 'Memory'}`}
             </button>
           )}
         </div>
