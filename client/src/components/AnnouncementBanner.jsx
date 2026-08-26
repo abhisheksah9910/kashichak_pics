@@ -9,9 +9,10 @@ export default function AnnouncementBanner() {
   useEffect(() => {
     const fetchAnnouncement = async () => {
       try {
-        const data = await getAnnouncement();
-        if (data && data.isActive) {
-          setAnnouncement(data);
+        const response = await getAnnouncement();
+        const announcementData = response.data;
+        if (announcementData && announcementData.isActive) {
+          setAnnouncement(announcementData);
         }
       } catch (err) {
         console.error("Failed to load announcement:", err);
