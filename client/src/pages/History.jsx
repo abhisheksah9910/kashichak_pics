@@ -8,7 +8,7 @@ import EmptyState from '../components/EmptyState';
 export default function History() {
   const [memories, setMemories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState('photo');
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -40,14 +40,6 @@ export default function History() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         {/* Filters */}
         <div className="flex flex-wrap justify-center gap-3 mb-10">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-5 py-2 rounded-full text-sm font-medium transition ${
-              filter === 'all' ? 'bg-terracotta-600 text-white' : 'bg-terracotta-100 text-terracotta-700 dark:bg-terracotta-900/40 dark:text-terracotta-300 dark:hover:bg-terracotta-900/60 hover:bg-terracotta-200'
-            }`}
-          >
-            All Memories
-          </button>
           <button
             onClick={() => setFilter('photo')}
             className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition ${
