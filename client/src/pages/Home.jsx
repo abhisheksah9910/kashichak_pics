@@ -78,43 +78,34 @@ export default function Home() {
           <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 10, repeat: Infinity, delay: 1 }} className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-orange-600/20 blur-[120px]" />
         </div>
         
-        <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32 h-[400px] flex flex-col justify-center">
-          <div className="h-32 sm:h-40 flex items-center justify-center">
+        <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32 h-[450px] flex flex-col justify-center perspective-[1000px]">
+          <div className="h-40 sm:h-48 flex items-center justify-center transform-style-preserve-3d">
             <AnimatePresence mode="wait">
               {!isHindi ? (
                 <motion.h1 
                   key="english"
-                  initial={{ opacity: 0, y: 20, filter: 'blur(8px)', scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-                  exit={{ opacity: 0, y: -20, filter: 'blur(8px)', scale: 0.95 }}
-                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-display text-5xl font-bold leading-tight sm:text-7xl tracking-tight absolute"
+                  initial={{ opacity: 0, y: 50, filter: 'blur(12px)', rotateX: -40, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', rotateX: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -50, filter: 'blur(12px)', rotateX: 40, scale: 0.9 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 150, mass: 1.2 }}
+                  className="font-display text-5xl font-bold leading-tight sm:text-7xl tracking-tight absolute drop-shadow-2xl"
                 >
                   Welcome to Apna Kashichak
                 </motion.h1>
               ) : (
                 <motion.h1 
                   key="hindi"
-                  initial={{ opacity: 0, y: 20, filter: 'blur(8px)', scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-                  exit={{ opacity: 0, y: -20, filter: 'blur(8px)', scale: 0.95 }}
-                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-display text-4xl sm:text-6xl font-bold leading-tight tracking-tight absolute bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent"
+                  initial={{ opacity: 0, y: 50, filter: 'blur(12px)', rotateX: -40, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)', rotateX: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -50, filter: 'blur(12px)', rotateX: 40, scale: 0.9 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 150, mass: 1.2 }}
+                  className="font-display text-5xl sm:text-7xl font-bold leading-tight tracking-tight absolute bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent drop-shadow-2xl"
                 >
                   अपना काशीचक में आपका स्वागत है
                 </motion.h1>
               )}
             </AnimatePresence>
           </div>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mx-auto mt-6 max-w-2xl text-base text-white/70 sm:text-lg"
-          >
-            Apna Kashichak is a community archive where we preserve photos and videos of the places we call home. <br className="hidden sm:block" /> 
-            <span className="mt-1 block text-sm font-medium text-terracotta-300">यह हमारा अपना काशीचक है, जहाँ हम अपनी पुरानी यादें संजोते हैं।</span>
-          </motion.p>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
