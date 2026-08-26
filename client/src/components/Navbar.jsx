@@ -140,7 +140,7 @@ export default function Navbar() {
           {deferredPrompt && (
             <button 
               onClick={handleInstallClick} 
-              className="hidden md:flex items-center gap-1 rounded-full bg-terracotta-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-terracotta-700 transition-colors"
+              className="flex items-center gap-1 rounded-full bg-terracotta-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-terracotta-700 transition-colors"
             >
               <Download className="h-4 w-4" /> Install App
             </button>
