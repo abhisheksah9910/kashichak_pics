@@ -8,12 +8,6 @@ import MemoryCard from '../components/MemoryCard';
 import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
 
-const steps = [
-  { icon: MapPin, title: 'Find your place (जगह खोजें)', text: 'Search for your village, town, or landmark.' },
-  { icon: Camera, title: 'Upload a memory (फोटो डालें)', text: 'Share a photo or video connected to it.' },
-  { icon: PenLine, title: 'Share its story (कहानी बताएँ)', text: 'Tell us when it was taken and what it means.' },
-  { icon: Archive, title: 'Preserve it forever (हमेशा के लिए संजोएँ)', text: 'It joins the place\'s living timeline.' },
-];
 
 const TypewriterText = ({ texts, typingSpeed = 80, deletingSpeed = 40, pause = 2500 }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -62,15 +56,12 @@ const TypewriterText = ({ texts, typingSpeed = 80, deletingSpeed = 40, pause = 2
 };
 
 export default function Home() {
-  const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
   const [places, setPlaces] = useState([]);
   const [memories, setMemories] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
   const [featured, setFeatured] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const debounceRef = useRef(null);
 
   useEffect(() => {
     setLoading(true);
@@ -89,22 +80,6 @@ export default function Home() {
       setLoading(false);
     });
   }, []);
-
-  const handleSearchChange = (val) => {
-    setQuery(val);
-    clearTimeout(debounceRef.current);
-    if (!val.trim()) return setSuggestions([]);
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const res = await api.get('/places/search-suggestions', { params: { q: val } });
-        setSuggestions(res.data.data);
-      } catch {
-        setSuggestions([]);
-      }
-    }, 300);
-  };
-
-  const goToPlace = (slug) => navigate(`/places/${slug}`);
 
   return (
     <div>
@@ -126,59 +101,9 @@ export default function Home() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
-            <Link to="/explore" className="btn-primary shadow-terracotta-600/20 shadow-lg"><Compass className="h-4 w-4" /> Explore (जगहें खोजें)</Link>
-            <Link to="/upload" className="btn-secondary !bg-white/10 !border-white/20 !text-white hover:!bg-white/20"><UploadCloud className="h-4 w-4" /> Share Memory (यादें साझा करें)</Link>
+            <Link to="/explore" className="btn-primary shadow-terracotta-600/20 shadow-lg"><Compass className="h-4 w-4" /> Explore</Link>
+            <Link to="/upload" className="btn-secondary !bg-white/10 !border-white/20 !text-white hover:!bg-white/20"><UploadCloud className="h-4 w-4" /> Share Memory</Link>
           </motion.div>
-
-          {/* Search */}
-          <div className="relative mx-auto mt-12 max-w-xl">
-            <div className="flex items-center gap-3 rounded-full border border-terracotta-200 dark:border-terracotta-800 bg-white dark:bg-ink-950/60 px-5 py-4 shadow-soft">
-              <Search className="h-5 w-5 text-terracotta-400" />
-              <input
-                value={query}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                placeholder="Search your place (अपनी जगह खोजें)..."
-                className="w-full bg-transparent text-sm outline-none placeholder:text-ink-950/40 dark:placeholder:text-terracotta-50/40"
-              />
-            </div>
-            {suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full z-10 mt-2 overflow-hidden rounded-2xl border border-terracotta-100 dark:border-terracotta-900/50 bg-white dark:bg-ink-950 text-left shadow-soft">
-                {suggestions.map((s) => (
-                  <button
-                    key={s._id}
-                    onClick={() => goToPlace(s.slug)}
-                    className="flex w-full items-center gap-2 px-5 py-3 text-sm hover:bg-terracotta-50 dark:hover:bg-terracotta-900/30"
-                  >
-                    <MapPin className="h-4 w-4 text-terracotta-400" />
-                    <span>{s.name}</span>
-                    <span className="ml-auto text-xs text-ink-950/40 dark:text-terracotta-50/40">
-                      {[s.area, s.district, s.state].filter(Boolean).join(', ')}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* Gaon Ki Khabar (Noticeboard) */}
-      <section className="mx-auto max-w-5xl px-4 py-2 sm:px-6 mb-8 mt-2">
-        <div className="flex items-center gap-4 rounded-2xl bg-gradient-to-r from-orange-100 to-amber-50 dark:from-terracotta-900/30 dark:to-orange-900/10 border border-orange-200 dark:border-terracotta-800 p-4 shadow-sm">
-          <div className="shrink-0 rounded-full bg-orange-500 p-2 text-white shadow-md">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-            </svg>
-          </div>
-          <div className="flex-1">
-            <h3 className="font-display font-semibold text-orange-900 dark:text-orange-200">Gaon Ki Khabar (गाँव की ख़बर)</h3>
-            <p className="mt-1 text-sm text-orange-800 dark:text-orange-300">
-              Welcome to Apna Kashichak! A place to preserve our memories. <br className="hidden sm:block" /> 
-              सभी ग्रामवासियों का 'अपना काशीचक' में स्वागत है। आइए अपनी पुरानी तस्वीरें साझा करें!
-            </p>
-          </div>
         </div>
       </section>
 
@@ -306,24 +231,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="bg-terracotta-950 py-20 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <h2 className="text-center font-display text-2xl font-semibold sm:text-3xl">How It Works</h2>
-          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {steps.map((s, i) => (
-              <div key={s.title} className="text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-terracotta-800">
-                  <s.icon className="h-6 w-6" />
-                </div>
-                <p className="text-xs font-medium text-terracotta-300">Step {i + 1}</p>
-                <h3 className="mt-1 font-display text-lg font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm text-terracotta-100/70">{s.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
