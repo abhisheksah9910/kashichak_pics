@@ -100,11 +100,19 @@ export default function Navbar() {
 
         {/* Desktop User Actions & Mobile Utilities */}
         <div className="flex items-center gap-2 sm:gap-3">
+          
+          {/* Admin Dashboard (Mobile & Desktop) */}
+          {isAdmin && (
+            <Link to="/admin" aria-label="Admin Dashboard" className="rounded-full p-2 text-terracotta-600 hover:bg-terracotta-50 dark:text-terracotta-400 dark:hover:bg-terracotta-900/30 transition-colors">
+              <ShieldCheck className="h-5 w-5" />
+            </Link>
+          )}
+
           {/* Notifications (Mobile & Desktop) */}
           {user && <NotificationBell user={user} />}
 
           {/* Theme Toggle (Mobile & Desktop) */}
-          <button onClick={toggleTheme} aria-label="Toggle dark mode" className="rounded-full p-2 text-ink-950/70 hover:bg-terracotta-50 dark:text-terracotta-50/70 dark:hover:bg-terracotta-900/30">
+          <button onClick={toggleTheme} aria-label="Toggle dark mode" className="rounded-full p-2 text-ink-950/70 hover:bg-terracotta-50 dark:text-terracotta-50/70 dark:hover:bg-terracotta-900/30 transition-colors">
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
           
