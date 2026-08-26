@@ -12,7 +12,7 @@ function NotificationBell({ user }) {
 
   useEffect(() => {
     if (!user) return;
-    api.get('/notifications').then(res => setNotifications(res.data.data)).catch(console.error);
+    api.get('/notifications').then(res => setNotifications(res.data.data)).catch(() => {});
   }, [user]);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -22,7 +22,7 @@ function NotificationBell({ user }) {
       await api.put(`/notifications/${id}/read`);
       setNotifications(notifications.map(n => n._id === id ? { ...n, isRead: true } : n));
     } catch (err) {
-      console.error(err);
+      // ignore
     }
   };
 
@@ -31,7 +31,7 @@ function NotificationBell({ user }) {
       await api.put('/notifications/read-all');
       setNotifications(notifications.map(n => ({ ...n, isRead: true })));
     } catch (err) {
-      console.error(err);
+      // ignore
     }
   };
 
@@ -85,6 +85,7 @@ export default function Navbar() {
   const { user, logout, isAdmin } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [deferredPrompt, setDeferredPrompt] = useState(null);
 
@@ -145,11 +146,21 @@ export default function Navbar() {
           </button>
 
           {/* PWA Install Button (Permanent) */}
+          {deferredPrompt && (
+            <button 
+              onClick={handleInstallClick} 
+              className="hidden md:flex items-center gap-1 rounded-full bg-terracotta-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-terracotta-700 transition-colors"
+            >
+              <Download className="h-4 w-4" /> Install
+            </button>
+          )}
+
+          {/* Mobile Menu Toggle */}
           <button 
-            onClick={handleInstallClick} 
-            className="flex items-center gap-1 rounded-full bg-terracotta-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-terracotta-700 transition-colors"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
+            className="md:hidden rounded-full p-2 text-ink-950/70 hover:bg-terracotta-50 dark:text-terracotta-50/70 dark:hover:bg-terracotta-900/30 transition-colors"
           >
-            <Download className="h-4 w-4" /> Install App
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
           
           {/* Desktop Only Actions */}
@@ -172,6 +183,42 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-terracotta-100 dark:border-terracotta-900/40 bg-white dark:bg-ink-950 absolute w-full left-0 shadow-lg">
+          <nav className="flex flex-col px-4 py-4 space-y-4">
+            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">Home</Link>
+            <Link to="/explore" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">Explore</Link>
+            <Link to="/history" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">History</Link>
+            <Link to="/upload" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">Share a Memory</Link>
+            {isAdmin && <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-terracotta-600 dark:text-terracotta-400">Admin Dashboard</Link>}
+            
+            {deferredPrompt && (
+              <button 
+                onClick={() => { handleInstallClick(); setMobileMenuOpen(false); }} 
+                className="flex w-max items-center gap-2 rounded-full bg-terracotta-600 px-4 py-2 text-xs font-semibold text-white shadow"
+              >
+                <Download className="h-4 w-4" /> Install App
+              </button>
+            )}
+
+            <div className="pt-4 border-t border-terracotta-100 dark:border-terracotta-900/40 flex items-center gap-4">
+              {user ? (
+                <>
+                  <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium">Profile</Link>
+                  <button onClick={() => { logout(); setMobileMenuOpen(false); navigate('/'); }} className="text-sm font-medium text-red-500">Log out</button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium">Log in</Link>
+                  <Link to="/signup" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-terracotta-600">Sign up</Link>
+                </>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

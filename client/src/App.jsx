@@ -14,10 +14,12 @@ import UserProfile from './pages/UserProfile';
 import AdminDashboard from './pages/AdminDashboard';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
+import ScrollToTop from './components/ScrollToTop';
 
 export default function App() {
   return (
     <div className="flex min-h-screen flex-col">
+      <ScrollToTop />
       <Navbar />
       <main className="flex-1 pb-[72px] md:pb-0">
         <Routes>
