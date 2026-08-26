@@ -26,6 +26,7 @@ const suggestionRoutes = require('./routes/suggestionRoutes');
 const placeSuggestionRoutes = require('./routes/placeSuggestionRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+require('./cron/cleanup');
 
 const app = express();
 

@@ -28,6 +28,7 @@ const memorySchema = new mongoose.Schema(
 
     isFeatured: { type: Boolean, default: false },
     featuredLabel: { type: String, enum: ['', 'featured', 'memory_of_the_week', 'historical'], default: '' },
+    rejectedAt: { type: Date, default: null },
 
     likeCount: { type: Number, default: 0 },
     reportCount: { type: Number, default: 0 },

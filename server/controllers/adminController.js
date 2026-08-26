@@ -161,6 +161,7 @@ const rejectMemory = async (req, res, next) => {
 
     memory.status = 'rejected';
     memory.rejectionReason = reason;
+    memory.rejectedAt = new Date();
 
     await memory.save();
 
