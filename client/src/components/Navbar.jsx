@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Landmark, Menu, X, Sun, Moon, Upload, User, LogOut, ShieldCheck, Bell, Download } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { toast } from 'react-hot-toast';
 import api from '../services/api';
 
 function NotificationBell({ user }) {
@@ -94,11 +95,15 @@ export default function Navbar() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      toast('App is already installed, or not supported on this browser!', { icon: 'ℹ️' });
+      return;
+    }
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
       setDeferredPrompt(null);
+      toast.success('App installed successfully!');
     }
   };
 
@@ -136,15 +141,13 @@ export default function Navbar() {
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
 
-          {/* PWA Install Button */}
-          {deferredPrompt && (
-            <button 
-              onClick={handleInstallClick} 
-              className="flex items-center gap-1 rounded-full bg-terracotta-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-terracotta-700 transition-colors"
-            >
-              <Download className="h-4 w-4" /> Install App
-            </button>
-          )}
+          {/* PWA Install Button (Permanent) */}
+          <button 
+            onClick={handleInstallClick} 
+            className="flex items-center gap-1 rounded-full bg-terracotta-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-terracotta-700 transition-colors"
+          >
+            <Download className="h-4 w-4" /> Install App
+          </button>
           
           {/* Desktop Only Actions */}
           <div className="hidden md:flex items-center gap-3">
