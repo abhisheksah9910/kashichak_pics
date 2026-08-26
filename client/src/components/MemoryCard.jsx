@@ -19,7 +19,7 @@ export default function MemoryCard({ memory, onClick }) {
         <div className="mt-2 flex items-center justify-between text-xs text-ink-950/50 dark:text-terracotta-50/50">
           <span>{memory.uploader?.name || 'Anonymous'}</span>
           <span className="flex items-center gap-1">
-            <Heart className="h-3.5 w-3.5" /> {memory.likeCount || 0}
+            <Heart className={`h-3.5 w-3.5 ${memory.isLiked ? 'fill-red-500 text-red-500' : ''}`} /> {memory.likeCount || 0}
           </span>
         </div>
       </div>

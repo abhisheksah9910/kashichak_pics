@@ -33,7 +33,7 @@ export default function History() {
     if (!user) return toast.error('Please log in to like memories.');
     try {
       const res = await api.post(`/memories/${memoryId}/like`);
-      setMemories((prev) => prev.map((m) => (m._id === memoryId ? { ...m, likeCount: res.data.data.likeCount } : m)));
+      setMemories((prev) => prev.map((m) => (m._id === memoryId ? { ...m, likeCount: res.data.data.likeCount, isLiked: res.data.data.liked } : m)));
     } catch (err) {
       toast.error(err.message);
     }

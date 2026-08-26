@@ -38,7 +38,7 @@ export default function UserProfile() {
         if (!currentUser) return toast.error('Please log in to like memories.');
         try {
             const res = await api.post(`/memories/${memoryId}/like`);
-            setMemories((prev) => prev.map((m, i) => (i === idx ? { ...m, likeCount: res.data.data.likeCount } : m)));
+            setMemories((prev) => prev.map((m, i) => (i === idx ? { ...m, likeCount: res.data.data.likeCount, isLiked: res.data.data.liked } : m)));
         } catch (err) {
             toast.error(err.message);
         }

@@ -34,7 +34,7 @@ const listMemories = async (req, res, next) => {
     };
 
     const skip = (Number(page) - 1) * Number(limit);
-    const [memories, total] = await Promise.all([
+    const [memoriesDocs, total] = await Promise.all([
       Memory.find(filter)
         .populate('uploader', 'name profileImage')
         .populate('place', 'name slug')
@@ -43,6 +43,17 @@ const listMemories = async (req, res, next) => {
         .limit(Number(limit)),
       Memory.countDocuments(filter),
     ]);
+
+    const memories = memoriesDocs.map(m => m.toObject());
+
+    if (req.user && memories.length > 0) {
+      const memoryIds = memories.map(m => m._id);
+      const userLikes = await Like.find({ user: req.user._id, memory: { $in: memoryIds } });
+      const likedMemoryIds = new Set(userLikes.map(l => l.memory.toString()));
+      memories.forEach(m => {
+        m.isLiked = likedMemoryIds.has(m._id.toString());
+      });
+    }
 
     return success(res, 200, 'Memories fetched.', memories, {
       total,

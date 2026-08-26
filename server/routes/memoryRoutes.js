@@ -16,8 +16,8 @@ const { upload } = require('../middleware/upload');
 
 const router = express.Router();
 
-router.get('/', listMemories);
-router.get('/timeline', getTimeline);
+router.get('/', attachUserIfPresent, listMemories);
+router.get('/timeline', attachUserIfPresent, getTimeline);
 router.get('/:id', attachUserIfPresent, getMemoryById);
 router.get('/:id/comments', getComments);
 

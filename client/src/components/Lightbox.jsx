@@ -117,8 +117,8 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
 
                         {/* Actions */}
                         <div className="mt-3 flex flex-wrap items-center gap-2">
-                            <button onClick={onLike} className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20">
-                                <Heart className="h-3.5 w-3.5" /> {memory.likeCount || 0}
+                            <button onClick={onLike} className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 transition-colors">
+                                <Heart className={`h-3.5 w-3.5 transition-colors ${memory.isLiked ? 'fill-red-500 text-red-500' : ''}`} /> {memory.likeCount || 0}
                             </button>
                             <button onClick={onReport} className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20">
                                 <Flag className="h-3.5 w-3.5" /> Report
