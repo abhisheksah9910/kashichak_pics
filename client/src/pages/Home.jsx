@@ -31,7 +31,9 @@ const TypewriterText = ({ text }) => {
 
   return (
     <>
-      <span className="bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent">{displayedText}</span>
+      <span className="bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent py-2 leading-normal">
+        {displayedText}
+      </span>
       <motion.span 
         animate={{ opacity: [1, 0, 1] }} 
         transition={{ repeat: Infinity, duration: 0.8 }}
@@ -107,7 +109,7 @@ export default function Home() {
         </div>
         
         <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32 flex flex-col justify-center min-h-[350px]">
-          <h1 className="font-display text-4xl sm:text-6xl font-bold leading-tight tracking-tight min-h-[120px] sm:min-h-[160px] flex items-center justify-center drop-shadow-xl">
+          <h1 className="font-display text-4xl sm:text-6xl font-bold leading-normal tracking-tight min-h-[120px] sm:min-h-[160px] flex items-center justify-center drop-shadow-xl">
             <TypewriterText text={!isHindi ? "Welcome to Apna Kashichak" : "अपना काशीचक में आपका स्वागत है"} />
           </h1>
           <motion.div 
