@@ -2,19 +2,19 @@ import { Link } from 'react-router-dom';
 import { Instagram, Facebook, Youtube, Heart, MapPin } from 'lucide-react';
 
 export default function Footer() {
-  const socialLinks = [
-    { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/kashichak_pics/', hoverClass: 'hover:bg-pink-100 hover:text-pink-600 dark:hover:bg-pink-900/30 dark:hover:text-pink-400' },
-    { name: 'Facebook', icon: Facebook, href: 'https://www.facebook.com/share/1EuLPGp3oM/', hoverClass: 'hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900/30 dark:hover:text-blue-400' },
-    { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/@kashichakpics', hoverClass: 'hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400' },
+  const badges = [
+    { name: 'INSTAGRAM', icon: Instagram, color: 'bg-[#e1306c]', href: 'https://www.instagram.com/kashichak_pics/' },
+    { name: 'FACEBOOK', icon: Facebook, color: 'bg-[#1877F2]', href: 'https://www.facebook.com/share/1EuLPGp3oM/' },
+    { name: 'YOUTUBE', icon: Youtube, color: 'bg-[#FF0000]', href: 'https://www.youtube.com/@kashichakpics' },
     { 
-      name: 'WhatsApp', 
+      name: 'WHATSAPP', 
       icon: (props) => (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
           <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
         </svg>
       ), 
-      href: 'https://whatsapp.com/channel/0029VbDVZoFKLaHuZfj9mV1U', 
-      hoverClass: 'hover:bg-green-100 hover:text-green-600 dark:hover:bg-green-900/30 dark:hover:text-green-400'
+      color: 'bg-[#25D366]', 
+      href: 'https://whatsapp.com/channel/0029VbDVZoFKLaHuZfj9mV1U' 
     }
   ];
 
@@ -31,20 +31,20 @@ export default function Footer() {
           Hamara gaon, hamari yaadein. Ek chhoti si koshish gaon ki khoobsurati ko hamesha ke liye sanjone ki.
         </p>
 
-        {/* Social Links */}
-        <div className="flex gap-4 mb-12">
-          {socialLinks.map((social, idx) => {
-            const Icon = social.icon;
+        {/* Social Links (Badges) */}
+        <div className="flex flex-wrap justify-center gap-2 mb-12 max-w-lg">
+          {badges.map((badge, idx) => {
+            const Icon = badge.icon;
             return (
               <a 
-                key={idx} 
-                href={social.href} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                aria-label={social.name}
-                className={`p-3 rounded-2xl bg-terracotta-50 dark:bg-terracotta-900/20 text-terracotta-600 dark:text-terracotta-400 transition-all duration-300 ${social.hoverClass}`}
+                key={idx}
+                href={badge.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex flex-1 sm:flex-none justify-center items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-bold tracking-wider text-white transition hover:opacity-80 hover:scale-105 transform rounded-sm ${badge.color}`}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="whitespace-nowrap">{badge.name}</span>
               </a>
             );
           })}
