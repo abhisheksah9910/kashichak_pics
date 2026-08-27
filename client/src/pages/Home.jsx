@@ -8,6 +8,8 @@ import MemoryCard from '../components/MemoryCard';
 import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
 import AdBanner from '../components/AdBanner';
+import Lightbox from '../components/Lightbox';
+import { useAuth } from '../context/AuthContext';
 import { getMediaUrl } from '../utils/mediaUtils';
 
 const TypewriterText = ({ texts, typingSpeed = 80, deletingSpeed = 40, pause = 2500 }) => {
@@ -65,6 +67,8 @@ export default function Home() {
   const [featured, setFeatured] = useState(null);
   const [featuredReel, setFeaturedReel] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -126,6 +130,52 @@ export default function Home() {
       setLoading(false);
     });
   }, []);
+
+  const handleLike = async (memoryId, idx) => {
+    if (!user) return toast.error('Please log in to like memories.');
+    try {
+      const res = await api.post(`/memories/${memoryId}/like`);
+      setMemories((prev) => prev.map((m, i) => (i === idx ? { ...m, likeCount: res.data.data.likeCount, isLiked: res.data.data.liked } : m)));
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleReport = async (memoryId) => {
+    if (!user) return toast.error('Please log in to report content.');
+    try {
+      await api.post('/reports', { memoryId, reason: 'inappropriate' });
+      toast.success('Reported. Our moderators will review it.');
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleDeleteMemory = async (memoryId) => {
+    if (!window.confirm('Are you sure you want to delete this memory?')) return;
+    try {
+      await api.delete(`/memories/${memoryId}`);
+      toast.success('Memory deleted.');
+      setMemories((prev) => prev.filter((m) => m._id !== memoryId));
+      setLightboxIndex(null);
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleEditMemory = async (memory) => {
+    const newCaption = window.prompt('Enter new caption:', memory.caption);
+    if (newCaption === null) return;
+    const newStory = window.prompt('Enter new story (optional):', memory.story || '');
+    if (newStory === null) return;
+    try {
+      const res = await api.put(`/memories/${memory._id}`, { caption: newCaption, story: newStory });
+      toast.success('Memory updated.');
+      setMemories((prev) => prev.map((m) => (m._id === memory._id ? { ...m, caption: newCaption, story: newStory } : m)));
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
 
   return (
     <div>
@@ -230,8 +280,8 @@ export default function Home() {
           <EmptyState title="No memories have been shared yet" message="Be the first to preserve one." />
         ) : (
           <div className="columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
-            {memories.map((m) => (
-              <MemoryCard key={m._id} memory={m} onClick={() => navigate(`/places/${m.place?.slug}`)} />
+            {memories.map((m, idx) => (
+              <MemoryCard key={m._id} memory={m} onClick={() => setLightboxIndex(idx)} />
             ))}
           </div>
         )}
@@ -345,6 +395,20 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Lightbox */}
+      {lightboxIndex !== null && memories[lightboxIndex] && (
+        <Lightbox
+          memory={memories[lightboxIndex]}
+          currentUser={user}
+          onClose={() => setLightboxIndex(null)}
+          onPrev={() => setLightboxIndex((i) => (i > 0 ? i - 1 : i))}
+          onNext={() => setLightboxIndex((i) => (i < memories.length - 1 ? i + 1 : i))}
+          onLike={() => handleLike(memories[lightboxIndex]._id, lightboxIndex)}
+          onReport={() => handleReport(memories[lightboxIndex]._id)}
+          onDelete={() => handleDeleteMemory(memories[lightboxIndex]._id)}
+          onEdit={() => handleEditMemory(memories[lightboxIndex])}
+        />
+      )}
     </div>
   );
 }

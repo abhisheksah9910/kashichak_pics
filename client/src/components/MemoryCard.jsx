@@ -5,14 +5,24 @@ export default function MemoryCard({ memory, onClick }) {
   return (
     <button onClick={onClick} className="card group relative flex flex-col h-full w-full overflow-hidden text-left">
       <div className="relative w-full aspect-square sm:aspect-[4/3] shrink-0 overflow-hidden bg-terracotta-100 dark:bg-terracotta-900/30">
-        <img
-          src={getMediaUrl(memory.thumbnailUrl || memory.mediaUrl)}
-          alt={memory.caption}
-          loading="lazy"
-          className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
-        />
-        {memory.mediaType === 'video' && (
-          <PlayCircle className="absolute inset-0 m-auto h-10 w-10 text-white drop-shadow-lg" />
+        {memory.mediaType === 'video' ? (
+          <>
+            <video
+              src={getMediaUrl(memory.mediaUrl)}
+              className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
+              preload="metadata"
+              muted
+              playsInline
+            />
+            <PlayCircle className="absolute inset-0 m-auto h-10 w-10 text-white drop-shadow-lg pointer-events-none" />
+          </>
+        ) : (
+          <img
+            src={getMediaUrl(memory.thumbnailUrl || memory.mediaUrl)}
+            alt={memory.caption}
+            loading="lazy"
+            className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
+          />
         )}
       </div>
       <div className="p-4 flex-1 flex flex-col justify-between">
