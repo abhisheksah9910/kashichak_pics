@@ -4,12 +4,26 @@ import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Landmark, User, Mail, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Signup() {
-  const { register } = useAuth();
+  const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [loading, setLoading] = useState(false);
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      setLoading(true);
+      await googleLogin(credentialResponse.credential);
+      toast.success('Signed in with Google!');
+      navigate('/');
+    } catch (err) {
+      toast.error(err.message || 'Google Sign Up failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -141,6 +155,22 @@ export default function Signup() {
               )}
             </button>
           </form>
+
+          <div className="mt-6 flex items-center justify-center">
+            <span className="text-sm text-ink-950/40 dark:text-terracotta-50/40">or</span>
+          </div>
+
+          <div className="mt-6 flex justify-center w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => toast.error('Google Sign Up Failed')}
+              useOneTap
+              theme="outline"
+              size="large"
+              shape="pill"
+              text="signup_with"
+            />
+          </div>
 
           <p className="mt-6 text-center text-sm text-ink-950/50 dark:text-terracotta-50/50">
             Already have an account?{' '}

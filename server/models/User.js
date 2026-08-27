@@ -20,8 +20,13 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true,
       minlength: 6,
+      select: false,
+    },
+
+    googleId: {
+      type: String,
+      default: null,
       select: false,
     },
 
@@ -81,7 +86,7 @@ const userSchema = new mongoose.Schema(
 // Hash password before saving
 userSchema.pre('save', async function (next) {
   try {
-    if (!this.isModified('password')) {
+    if (!this.isModified('password') || !this.password) {
       return next();
     }
 

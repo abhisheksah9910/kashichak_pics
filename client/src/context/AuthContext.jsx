@@ -34,13 +34,20 @@ export function AuthProvider({ children }) {
     return res.data.data.user;
   };
 
+  const googleLogin = async (credential) => {
+    const res = await api.post('/auth/google', { credential });
+    localStorage.setItem('apna-token', res.data.data.token);
+    setUser(res.data.data.user);
+    return res.data.data.user;
+  };
+
   const logout = () => {
     localStorage.removeItem('apna-token');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isAdmin: user?.role === 'admin' }}>
+    <AuthContext.Provider value={{ user, loading, login, register, googleLogin, logout, isAdmin: user?.role === 'admin' }}>
       {children}
     </AuthContext.Provider>
   );

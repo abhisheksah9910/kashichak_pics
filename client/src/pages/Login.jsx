@@ -4,13 +4,27 @@ import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Landmark, Mail, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      setLoading(true);
+      await googleLogin(credentialResponse.credential);
+      toast.success('Logged in with Google!');
+      navigate(location.state?.from?.pathname || '/');
+    } catch (err) {
+      toast.error(err.message || 'Google Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -118,12 +132,6 @@ export default function Login() {
               />
             </div>
             
-            <div className="flex justify-end">
-              <Link to="/forgot-password" className="text-sm font-semibold text-terracotta-600 hover:underline">
-                Forgot password?
-              </Link>
-            </div>
-
             <button
               type="submit"
               disabled={loading}
@@ -137,6 +145,21 @@ export default function Login() {
               )}
             </button>
           </form>
+
+          <div className="mt-6 flex items-center justify-center">
+            <span className="text-sm text-ink-950/40 dark:text-terracotta-50/40">or</span>
+          </div>
+
+          <div className="mt-6 flex justify-center w-full">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => toast.error('Google Login Failed')}
+              useOneTap
+              theme="outline"
+              size="large"
+              shape="pill"
+            />
+          </div>
 
           <p className="mt-6 text-center text-sm text-ink-950/50 dark:text-terracotta-50/50">
             Don't have an account?{' '}

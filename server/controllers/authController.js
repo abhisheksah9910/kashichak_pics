@@ -3,7 +3,9 @@ const jwt = require('jsonwebtoken');
 const validator = require('validator');
 const User = require('../models/User');
 const { success, error } = require('../utils/apiResponse');
-const { sendPasswordResetEmail } = require('../services/emailService');
+const { OAuth2Client } = require('google-auth-library');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const signToken = (id) =>
   jwt.sign(
@@ -94,81 +96,52 @@ const getMe = async (req, res, next) => {
   }
 };
 
-const forgotPassword = async (req, res, next) => {
+
+const googleLogin = async (req, res, next) => {
   try {
-    const { email } = req.body;
-    if (!email) {
-      return error(res, 400, 'Please provide an email address.');
+    const { credential } = req.body;
+    if (!credential) {
+      return error(res, 400, 'Google token is required.');
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
-      return error(res, 404, 'There is no user with that email address.');
-    }
-
-    // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-    const resetPasswordExpires = Date.now() + 60 * 60 * 1000; // 1 hour
-
-    // Update user
-    user.resetPasswordToken = resetPasswordToken;
-    user.resetPasswordExpires = resetPasswordExpires;
-    await user.save({ validateBeforeSave: false });
-
-    // Send email
-    const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
-    try {
-      await sendPasswordResetEmail(user.email, user.name, resetUrl);
-      return success(res, 200, 'Password reset link sent to email.');
-    } catch (err) {
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-      await user.save({ validateBeforeSave: false });
-      return error(res, 500, 'There was an error sending the email. Try again later.');
-    }
-  } catch (err) {
-    next(err);
-  }
-};
-
-const resetPassword = async (req, res, next) => {
-  try {
-    const { token } = req.params;
-    const { password } = req.body;
-
-    if (!password || password.length < 6) {
-      return error(res, 400, 'Password must be at least 6 characters.');
-    }
-
-    // Hash token to compare
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
-    const user = await User.findOne({
-      resetPasswordToken: hashedToken,
-      resetPasswordExpires: { $gt: Date.now() }
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
+    const payload = ticket.getPayload();
+    const { email, name, picture, sub: googleId } = payload;
+
+    let user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-      return error(res, 400, 'Token is invalid or has expired.');
+      user = await User.create({
+        name,
+        email: email.toLowerCase(),
+        googleId,
+        profileImage: picture,
+        isEmailVerified: true,
+      });
+    } else {
+      if (!user.googleId) {
+        user.googleId = googleId;
+        if (!user.profileImage) user.profileImage = picture;
+        await user.save({ validateBeforeSave: false });
+      }
     }
 
-    // Update password
-    user.password = password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
+    if (user.isBanned) {
+      return error(res, 403, 'This account has been suspended.');
+    }
 
-    // Log the user in
     const jwtToken = signToken(user._id);
-
-    return success(res, 200, 'Password updated successfully.', {
+    return success(res, 200, 'Logged in with Google successfully.', {
       token: jwtToken,
       user: user.toSafeObject(),
     });
   } catch (err) {
-    next(err);
+    console.error('Google login error:', err);
+    return error(res, 401, 'Invalid Google token.');
   }
 };
 
-module.exports = { register, login, getMe, forgotPassword, resetPassword };
+module.exports = { register, login, getMe, googleLogin };

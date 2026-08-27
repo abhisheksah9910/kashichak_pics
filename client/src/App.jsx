@@ -9,8 +9,6 @@ import PlaceDetails from './pages/PlaceDetails';
 import Upload from './pages/Upload';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
 import Profile from './pages/Profile';
 import UserProfile from './pages/UserProfile';
 import AdminDashboard from './pages/AdminDashboard';
@@ -19,31 +17,33 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ScrollToTop from './components/ScrollToTop';
 import AnnouncementBanner from './components/AnnouncementBanner';
 
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 export default function App() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <ScrollToTop />
-      <AnnouncementBanner />
-      <Navbar />
-      <main className="flex-1 pb-[72px] md:pb-0">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/places/:slug" element={<PlaceDetails />} />
-          <Route path="/profile/:id" element={<UserProfile />} />
-          <Route path="/upload" element={<Upload />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-      <Footer />
-      <BottomNav />
-    </div>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <div className="flex min-h-screen flex-col">
+        <ScrollToTop />
+        <AnnouncementBanner />
+        <Navbar />
+        <main className="flex-1 pb-[72px] md:pb-0">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/explore" element={<Explore />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/places/:slug" element={<PlaceDetails />} />
+            <Route path="/profile/:id" element={<UserProfile />} />
+            <Route path="/upload" element={<Upload />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+        <Footer />
+        <BottomNav />
+      </div>
+    </GoogleOAuthProvider>
   );
 }
