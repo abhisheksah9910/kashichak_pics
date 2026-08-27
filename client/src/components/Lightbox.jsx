@@ -148,7 +148,7 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
                                     <button onClick={onDelete} className="flex items-center gap-1.5 rounded-full bg-red-500/80 px-3 py-1.5 text-xs text-white hover:bg-red-500">Delete</button>
                                 </>
                             )}
-                            {isAdmin && onSetCover && (
+                            {isAdmin && onSetCover && memory.mediaType !== 'video' && (
                                 <button onClick={onSetCover} className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 border border-white/20">
                                     Set as Cover
                                 </button>

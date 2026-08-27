@@ -20,6 +20,7 @@ export default function PlaceDetails() {
   const [tab, setTab] = useState('Photos');
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [coverError, setCoverError] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -124,9 +125,14 @@ export default function PlaceDetails() {
   return (
     <div>
       {/* Cover */}
-      <div className="relative h-64 w-full md:h-96">
-        {place.coverImage ? (
-          <img src={getMediaUrl(place.coverImage)} alt={place.name} className="h-full w-full object-cover" />
+      <div className="relative h-64 w-full md:h-96 bg-ink-950">
+        {place.coverImage && !coverError ? (
+          <img 
+            src={getMediaUrl(place.coverImage)} 
+            alt={place.name} 
+            className="h-full w-full object-cover" 
+            onError={() => setCoverError(true)}
+          />
         ) : (
           <div className="flex h-full w-full items-center justify-center"><MapPin className="h-16 w-16 text-terracotta-300" /></div>
         )}
