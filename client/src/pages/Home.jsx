@@ -99,7 +99,7 @@ export default function Home() {
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
-      toast('Install not ready! Please use the browser menu (3 dots) -> "Install App" or refresh the page.', { icon: 'ℹ️', duration: 5000 });
+      toast('अभी इंस्टॉल के लिए तैयार नहीं है! कृपया ब्राउज़र मेनू (3 dots) से "Install App" चुनें या पेज रिफ्रेश करें।', { icon: 'ℹ️', duration: 5000 });
       return;
     }
     deferredPrompt.prompt();
