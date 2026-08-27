@@ -25,6 +25,7 @@ const ALL_TABS = [
   'Manage Memories',
   'Announcements',
   'Manage Ads',
+  'Settings',
 ];
 
 export default function AdminDashboard() {
@@ -40,6 +41,7 @@ export default function AdminDashboard() {
   const [ads, setAds] = useState([]);
   const [announcement, setAnnouncement] = useState({ message: '', isActive: false, backgroundColor: 'bg-terracotta-600', link: '' });
   const [newAd, setNewAd] = useState({ file: null, caption: '', link: '', slot: 'general' });
+  const [featuredReel, setFeaturedReel] = useState({ instaUrl: '', videoFile: null });
   const [loading, setLoading] = useState(true);
 
   const loadTab = async (selectedTab) => {
@@ -88,6 +90,13 @@ export default function AdminDashboard() {
       if (selectedTab === 'Manage Ads') {
         const response = await api.get('/ads');
         setAds(response.data.data);
+      }
+
+      if (selectedTab === 'Settings') {
+        const response = await api.get('/settings/featured_reel').catch(() => null);
+        if (response?.data?.data) {
+          setFeaturedReel(prev => ({ ...prev, instaUrl: response.data.data.instaUrl || '' }));
+        }
       }
     } catch (err) {
       console.error(err);
@@ -330,6 +339,27 @@ export default function AdminDashboard() {
       setAds(ads.filter(ad => ad._id !== id));
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleUpdateFeaturedReel = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('instaUrl', featuredReel.instaUrl);
+    if (featuredReel.videoFile) {
+      formData.append('video', featuredReel.videoFile);
+    }
+    
+    const loadingToast = toast.loading('Updating featured reel...');
+    try {
+      await api.put('/settings/featured-reel', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      toast.success('Featured reel updated successfully', { id: loadingToast });
+      setFeaturedReel({ ...featuredReel, videoFile: null }); // clear file input state
+      loadTab('Settings');
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message, { id: loadingToast });
     }
   };
 
@@ -823,6 +853,39 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        ) : tab === 'Settings' ? (
+          <div className="space-y-8">
+            <div className="card p-6">
+              <h2 className="text-xl font-semibold mb-4">Featured Instagram Reel</h2>
+              <p className="text-sm text-ink-950/70 mb-6">
+                Update the reel that appears on the Home page. It will display a blurred video and redirect to the provided Instagram link.
+              </p>
+              <form onSubmit={handleUpdateFeaturedReel} className="max-w-md space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Instagram Reel Link</label>
+                  <input 
+                    type="url" 
+                    required
+                    placeholder="https://www.instagram.com/reel/..."
+                    value={featuredReel.instaUrl}
+                    onChange={(e) => setFeaturedReel({...featuredReel, instaUrl: e.target.value})}
+                    className="input w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Video File (MP4/WebM)</label>
+                  <input 
+                    type="file" 
+                    accept="video/mp4,video/webm"
+                    onChange={(e) => setFeaturedReel({...featuredReel, videoFile: e.target.files[0]})}
+                    className="input w-full p-2"
+                  />
+                  <p className="text-xs text-ink-950/50 mt-1">Upload a new video to replace the existing one, or leave empty to keep the current video.</p>
+                </div>
+                <button type="submit" className="btn-primary py-2 px-4">Save Settings</button>
+              </form>
             </div>
           </div>
         ) : null}

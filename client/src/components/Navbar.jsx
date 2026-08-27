@@ -88,8 +88,17 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
+    const checkStandalone = () => {
+      return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true
+      );
+    };
+    setIsStandalone(checkStandalone());
+
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -145,8 +154,8 @@ export default function Navbar() {
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
 
-          {/* PWA Install Button (Permanent) */}
-          {deferredPrompt && (
+          {/* PWA Install Button (Permanent on web, hidden in PWA) */}
+          {!isStandalone && (
             <button 
               onClick={handleInstallClick} 
               className="hidden md:flex items-center gap-1 rounded-full bg-terracotta-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-terracotta-700 transition-colors"
@@ -194,7 +203,7 @@ export default function Navbar() {
             <Link to="/upload" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">Share a Memory</Link>
             {isAdmin && <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-terracotta-600 dark:text-terracotta-400">Admin Dashboard</Link>}
             
-            {deferredPrompt && (
+            {!isStandalone && (
               <button 
                 onClick={() => { handleInstallClick(); setMobileMenuOpen(false); }} 
                 className="flex w-max items-center gap-2 rounded-full bg-terracotta-600 px-4 py-2 text-xs font-semibold text-white shadow"

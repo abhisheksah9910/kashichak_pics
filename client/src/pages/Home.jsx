@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Compass, UploadCloud, MapPin, Camera, PenLine, Archive, Trophy } from 'lucide-react';
+import { Search, Compass, UploadCloud, MapPin, Camera, PenLine, Archive, Trophy, Download, Play } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import api from '../services/api';
 import PlaceCard from '../components/PlaceCard';
 import MemoryCard from '../components/MemoryCard';
@@ -72,8 +73,42 @@ export default function Home() {
   const [memories, setMemories] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
   const [featured, setFeatured] = useState(null);
+  const [featuredReel, setFeaturedReel] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    const checkStandalone = () => {
+      return (
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true
+      );
+    };
+    setIsStandalone(checkStandalone());
+
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) {
+      toast('Install not ready! Please use the browser menu (3 dots) -> "Install App" or refresh the page.', { icon: 'ℹ️', duration: 5000 });
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+      toast.success('App installed successfully!');
+    }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -81,7 +116,8 @@ export default function Home() {
       api.get('/places', { params: { sort: 'most_memories', limit: 6 } }),
       api.get('/memories', { params: { sort: 'newest', limit: 8 } }),
       api.get('/users/leaderboard'),
-    ]).then(([placesRes, memoriesRes, leaderboardRes]) => {
+      api.get('/settings/featured_reel').catch(() => null),
+    ]).then(([placesRes, memoriesRes, leaderboardRes, reelRes]) => {
       if (placesRes.status === 'fulfilled') setPlaces(placesRes.value.data.data);
       if (memoriesRes.status === 'fulfilled') {
         const list = memoriesRes.value.data.data;
@@ -89,6 +125,9 @@ export default function Home() {
         setFeatured(list.find((m) => m.isFeatured) || list[0] || null);
       }
       if (leaderboardRes.status === 'fulfilled') setLeaderboard(leaderboardRes.value.data.data);
+      if (reelRes.status === 'fulfilled' && reelRes.value?.data?.data) {
+        setFeaturedReel(reelRes.value.data.data);
+      }
       setLoading(false);
     });
   }, []);
@@ -107,14 +146,25 @@ export default function Home() {
           <h1 className="font-display text-3xl sm:text-5xl font-bold leading-normal tracking-tight min-h-[120px] sm:min-h-[160px] flex items-center justify-center drop-shadow-xl">
             <TypewriterText texts={["Welcome to Kashichak", "अपना काशीचक में आपका स्वागत है"]} />
           </h1>
+          
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
-            <Link to="/explore" className="btn-primary shadow-terracotta-600/20 shadow-lg"><Compass className="h-4 w-4" /> Explore</Link>
-            <Link to="/upload" className="btn-secondary !bg-white/10 !border-white/20 !text-white hover:!bg-white/20"><UploadCloud className="h-4 w-4" /> Share Memory</Link>
+            {/* Install App Button */}
+            {!isStandalone && (
+              <button 
+                onClick={handleInstallClick} 
+                className="btn-primary shadow-terracotta-600/20 shadow-lg bg-terracotta-500 hover:bg-terracotta-600 animate-pulse border-none w-full sm:w-auto flex justify-center"
+              >
+                <Download className="h-4 w-4" /> Install App
+              </button>
+            )}
+            
+            <Link to="/explore" className="btn-primary shadow-terracotta-600/20 shadow-lg w-full sm:w-auto flex justify-center"><Compass className="h-4 w-4" /> Explore</Link>
+            <Link to="/upload" className="btn-secondary !bg-white/10 !border-white/20 !text-white hover:!bg-white/20 w-full sm:w-auto flex justify-center"><UploadCloud className="h-4 w-4" /> Share Memory</Link>
           </motion.div>
         </div>
       </section>
@@ -209,6 +259,63 @@ export default function Home() {
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <AdBanner type="horizontal" slotId="home_middle" />
       </section>
+
+      {/* Featured Reel Section */}
+      {featuredReel && featuredReel.videoUrl && featuredReel.instaUrl && (
+        <section className="bg-ink-950 py-16 text-white overflow-hidden relative">
+          <div className="absolute inset-0 z-0">
+            {/* Background Blur */}
+            <video 
+              src={featuredReel.videoUrl} 
+              autoPlay 
+              muted 
+              loop 
+              playsInline 
+              className="w-full h-full object-cover opacity-20 blur-2xl scale-110"
+            />
+          </div>
+          <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 flex flex-col md:flex-row items-center gap-12">
+            <div className="flex-1 space-y-6">
+              <h2 className="font-display text-3xl font-bold sm:text-4xl text-terracotta-400">Latest from Instagram</h2>
+              <p className="text-lg text-white/80 max-w-md">
+                Catch up on our latest reel and explore the beauty of Kashichak right on your feed!
+              </p>
+              <a 
+                href={featuredReel.instaUrl} 
+                target="_blank" 
+                rel="noreferrer"
+                className="btn-primary shadow-terracotta-600/20 shadow-lg inline-flex items-center gap-2"
+              >
+                <Play className="h-4 w-4" /> Watch on Instagram
+              </a>
+            </div>
+            <div className="flex-1 flex justify-center md:justify-end">
+              <a 
+                href={featuredReel.instaUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="relative block rounded-3xl overflow-hidden border-[6px] border-white/10 shadow-2xl group w-64 md:w-80 aspect-[9/16] bg-ink-900"
+              >
+                <video 
+                  src={featuredReel.videoUrl}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                  <div className="h-16 w-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white scale-90 group-hover:scale-100 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 ml-1">
+                      <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Top Contributors */}
       <section className="bg-terracotta-50/30 dark:bg-terracotta-950/5 py-16">
