@@ -130,9 +130,9 @@ export default function Navbar() {
 
         <nav className="hidden items-center gap-8 md:flex">
           <NavLink to="/" className={navLinkClass} end>Home</NavLink>
-          <NavLink to="/explore" className={navLinkClass}>Explore</NavLink>
-          <NavLink to="/history" className={navLinkClass}>History</NavLink>
-          <NavLink to="/upload" className={navLinkClass}>Share a Memory</NavLink>
+          <NavLink to="/explore" className={navLinkClass}>तस्वीरें (Photos)</NavLink>
+          <NavLink to="/history" className={navLinkClass}>इतिहास (History)</NavLink>
+          <NavLink to="/upload" className={navLinkClass}>फोटो / वीडियो जोड़ें</NavLink>
           {isAdmin && <NavLink to="/admin" className={navLinkClass}>Admin</NavLink>}
         </nav>
 
@@ -198,9 +198,9 @@ export default function Navbar() {
         <div className="md:hidden border-t border-terracotta-100 dark:border-terracotta-900/40 bg-white dark:bg-ink-950 absolute w-full left-0 shadow-lg">
           <nav className="flex flex-col px-4 py-4 space-y-4">
             <Link to="/" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">Home</Link>
-            <Link to="/explore" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">Explore</Link>
-            <Link to="/history" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">History</Link>
-            <Link to="/upload" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">Share a Memory</Link>
+            <Link to="/explore" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">तस्वीरें (Photos)</Link>
+            <Link to="/history" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">इतिहास (History)</Link>
+            <Link to="/upload" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-ink-950/70 dark:text-terracotta-50/70">फोटो / वीडियो जोड़ें</Link>
             {isAdmin && <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="text-sm font-medium text-terracotta-600 dark:text-terracotta-400">Admin Dashboard</Link>}
             
             {!isStandalone && (

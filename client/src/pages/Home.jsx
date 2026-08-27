@@ -10,68 +10,11 @@ import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
 import AdBanner from '../components/AdBanner';
 
-const TypewriterText = ({ texts, typingSpeed = 80, deletingSpeed = 40, pause = 2500 }) => {
-  const [displayedText, setDisplayedText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [loopNum, setLoopNum] = useState(0);
 
-  useEffect(() => {
-    let timer;
-    const current = loopNum % texts.length;
-    const fullText = texts[current];
-
-    if (isDeleting) {
-      timer = setTimeout(() => {
-        setDisplayedText(fullText.substring(0, displayedText.length - 1));
-      }, deletingSpeed);
-    } else {
-      timer = setTimeout(() => {
-        setDisplayedText(fullText.substring(0, displayedText.length + 1));
-      }, typingSpeed);
-    }
-
-    if (!isDeleting && displayedText === fullText) {
-      timer = setTimeout(() => setIsDeleting(true), pause);
-    } else if (isDeleting && displayedText === '') {
-      setIsDeleting(false);
-      setLoopNum(loopNum + 1);
-    }
-
-    return () => clearTimeout(timer);
-  }, [displayedText, isDeleting, loopNum, texts, typingSpeed, deletingSpeed, pause]);
-
-  return (
-    <>
-      <span className="font-mono bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent py-2 leading-normal">
-        {displayedText}
-      </span>
-      <motion.span 
-        animate={{ opacity: [1, 0, 1] }} 
-        transition={{ repeat: Infinity, duration: 0.8 }}
-        className="text-terracotta-500 font-light ml-1"
-      >
-        |
-      </motion.span>
-    </>
-  );
-};
-
-const AnimatedDivider = () => (
-  <div className="flex justify-center w-full my-4 opacity-60">
-    <div className="h-[2px] w-full max-w-5xl bg-gradient-to-r from-transparent via-terracotta-500/50 to-transparent relative overflow-hidden">
-      <motion.div
-        animate={{ x: ["-100%", "300%"] }}
-        transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
-        className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-orange-300 to-transparent opacity-80"
-      />
-    </div>
-  </div>
-);
 
 export default function Home() {
   const [places, setPlaces] = useState([]);
   const [memories, setMemories] = useState([]);
-  const [leaderboard, setLeaderboard] = useState([]);
   const [featured, setFeatured] = useState(null);
   const [featuredReel, setFeaturedReel] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -115,16 +58,14 @@ export default function Home() {
     Promise.allSettled([
       api.get('/places', { params: { sort: 'most_memories', limit: 6 } }),
       api.get('/memories', { params: { sort: 'newest', limit: 8 } }),
-      api.get('/users/leaderboard'),
       api.get('/settings/featured_reel').catch(() => null),
-    ]).then(([placesRes, memoriesRes, leaderboardRes, reelRes]) => {
+    ]).then(([placesRes, memoriesRes, reelRes]) => {
       if (placesRes.status === 'fulfilled') setPlaces(placesRes.value.data.data);
       if (memoriesRes.status === 'fulfilled') {
         const list = memoriesRes.value.data.data;
         setMemories(list);
         setFeatured(list.find((m) => m.isFeatured) || list[0] || null);
       }
-      if (leaderboardRes.status === 'fulfilled') setLeaderboard(leaderboardRes.value.data.data);
       if (reelRes.status === 'fulfilled' && reelRes.value?.data?.data) {
         setFeaturedReel(reelRes.value.data.data);
       }
@@ -135,25 +76,21 @@ export default function Home() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-ink-950 text-white">
-        {/* Animated subtle background blobs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 8, repeat: Infinity }} className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-terracotta-600/30 blur-[100px]" />
-          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 10, repeat: Infinity, delay: 1 }} className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-orange-600/20 blur-[120px]" />
-        </div>
-        
-        <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32 flex flex-col justify-center min-h-[350px]">
-          <h1 className="font-display text-3xl sm:text-5xl font-bold leading-normal tracking-tight min-h-[120px] sm:min-h-[160px] flex items-center justify-center drop-shadow-xl">
-            <TypewriterText texts={["Welcome to Kashichak", "अपना काशीचक में आपका स्वागत है"]} />
+      <section className="bg-ink-950 text-white py-16">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
+          <h1 className="font-display text-4xl sm:text-5xl font-bold leading-tight mb-4 text-terracotta-400">
+            अपना काशीचक<br />में आपका स्वागत है
           </h1>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
-          >
-            {/* Install App Button */}
+          <p className="text-lg text-white/80 max-w-2xl mx-auto mb-8">
+            Explore photos, videos, and memories of our village. Connect with your roots and share your Kashichak moments.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <Link to="/explore" className="btn-primary py-3 px-8 text-lg w-full sm:w-auto">
+              गाँव की तस्वीरें देखें
+            </Link>
+            <Link to="/upload" className="btn-secondary bg-white/10 hover:bg-white/20 text-white py-3 px-8 text-lg w-full sm:w-auto border-transparent">
+              फोटो / वीडियो जोड़ें
+            </Link>
             {!isStandalone && (
               <button 
                 onClick={handleInstallClick} 
@@ -162,14 +99,9 @@ export default function Home() {
                 <Download className="h-4 w-4" /> Install App
               </button>
             )}
-            
-            <Link to="/explore" className="btn-primary shadow-terracotta-600/20 shadow-lg w-full sm:w-auto flex justify-center"><Compass className="h-4 w-4" /> Explore</Link>
-            <Link to="/upload" className="btn-secondary !bg-white/10 !border-white/20 !text-white hover:!bg-white/20 w-full sm:w-auto flex justify-center"><UploadCloud className="h-4 w-4" /> Share Memory</Link>
-          </motion.div>
+          </div>
         </div>
       </section>
-
-      <AnimatedDivider />
 
       {/* Popular places */}
       <motion.section 
@@ -317,49 +249,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* Top Contributors */}
-      <section className="bg-terracotta-50/30 dark:bg-terracotta-950/5 py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-8 flex items-center gap-3">
-            <Trophy className="h-6 w-6 text-terracotta-500" />
-            <h2 className="font-display text-2xl font-semibold sm:text-3xl">Top Contributors</h2>
-          </div>
-          {loading ? (
-            <GridSkeleton count={4} />
-          ) : leaderboard.length === 0 ? (
-            <EmptyState title="No contributors yet" message="Start sharing memories to appear here." />
-          ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {leaderboard.map((user, index) => (
-                <Link key={user._id} to={`/profile/${user._id}`} className="card flex items-center gap-4 p-4 hover:border-terracotta-300 transition">
-                  <div className="relative">
-                    <div className="h-12 w-12 rounded-full bg-terracotta-200 dark:bg-terracotta-800 flex items-center justify-center overflow-hidden">
-                      {user.user.profileImage ? (
-                        <img src={user.user.profileImage} alt={user.user.name} className="h-full w-full object-cover" />
-                      ) : (
-                        <span className="font-display text-lg text-terracotta-700 dark:text-terracotta-300">
-                          {user.user.name.charAt(0).toUpperCase()}
-                        </span>
-                      )}
-                    </div>
-                    {index < 3 && (
-                      <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-terracotta-500 flex items-center justify-center text-xs font-bold text-white border-2 border-white dark:border-ink-950">
-                        {index + 1}
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-sm line-clamp-1">{user.user.name}</p>
-                    <p className="text-xs text-ink-950/60 dark:text-terracotta-50/60 mt-0.5">
-                      {user.memoryCount} memories · {user.totalLikes} likes
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+
 
     </div>
   );

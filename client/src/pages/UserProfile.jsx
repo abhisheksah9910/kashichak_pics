@@ -36,7 +36,7 @@ export default function UserProfile() {
     }, [id]);
 
     const handleLike = async (memoryId, idx) => {
-        if (!currentUser) return toast.error('Please log in to like memories.');
+        if (!currentUser) return toast.error('लाइक करने के लिए लॉग इन करें।');
         try {
             const res = await api.post(`/memories/${memoryId}/like`);
             setMemories((prev) => prev.map((m, i) => (i === idx ? { ...m, likeCount: res.data.data.likeCount, isLiked: res.data.data.liked } : m)));
@@ -46,7 +46,7 @@ export default function UserProfile() {
     };
 
     const handleReport = async (memoryId) => {
-        if (!currentUser) return toast.error('Please log in to report content.');
+        if (!currentUser) return toast.error('रिपोर्ट करने के लिए लॉग इन करें।');
         try {
             await api.post('/reports', { memoryId, reason: 'inappropriate' });
             toast.success('Reported. Our moderators will review it.');
@@ -56,7 +56,7 @@ export default function UserProfile() {
     };
 
     const handleDeleteMemory = async (memoryId) => {
-        if (!window.confirm('Are you sure you want to delete this memory?')) return;
+        if (!window.confirm('क्या आप सच में इसे डिलीट करना चाहते हैं?')) return;
         try {
             await api.delete(`/memories/${memoryId}`);
             toast.success('Memory deleted.');
@@ -83,7 +83,7 @@ export default function UserProfile() {
     };
 
     if (loading) return <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6"><GridSkeleton count={6} /></div>;
-    if (!profile) return <div className="mx-auto max-w-7xl px-4 py-24 text-center sm:px-6"><EmptyState title="User not found" /></div>;
+    if (!profile) return <div className="mx-auto max-w-7xl px-4 py-24 text-center sm:px-6"><EmptyState title="यूज़र नहीं मिला (User not found)" /></div>;
 
     return (
         <div>
@@ -108,15 +108,15 @@ export default function UserProfile() {
                     <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm">
                         <div className="flex flex-col items-center">
                             <span className="font-semibold text-lg">{stats.approvedUploads}</span>
-                            <span className="text-ink-950/60 dark:text-terracotta-50/60 flex items-center gap-1"><Image className="h-4 w-4" /> Memories</span>
+                            <span className="text-ink-950/60 dark:text-terracotta-50/60 flex items-center gap-1"><Image className="h-4 w-4" /> तस्वीरें/वीडियो</span>
                         </div>
                         <div className="flex flex-col items-center">
                             <span className="font-semibold text-lg">{stats.placesContributed}</span>
-                            <span className="text-ink-950/60 dark:text-terracotta-50/60 flex items-center gap-1"><MapPin className="h-4 w-4" /> Places</span>
+                            <span className="text-ink-950/60 dark:text-terracotta-50/60 flex items-center gap-1"><MapPin className="h-4 w-4" /> जगहें</span>
                         </div>
                         <div className="flex flex-col items-center">
                             <span className="font-semibold text-lg">{stats.totalLikes}</span>
-                            <span className="text-ink-950/60 dark:text-terracotta-50/60 flex items-center gap-1"><Heart className="h-4 w-4" /> Likes</span>
+                            <span className="text-ink-950/60 dark:text-terracotta-50/60 flex items-center gap-1"><Heart className="h-4 w-4" /> लाइक्स</span>
                         </div>
                     </div>
                 </div>
@@ -124,10 +124,10 @@ export default function UserProfile() {
 
             {/* Memories Grid */}
             <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-                <h2 className="font-display text-2xl font-semibold mb-8">Memories by {profile.name}</h2>
+                <h2 className="font-display text-2xl font-semibold mb-8">{profile.name} की तस्वीरें/वीडियो</h2>
 
                 {memories.length === 0 ? (
-                    <EmptyState title="No memories yet" message="This user hasn't shared any memories yet." />
+                    <EmptyState title="अभी कोई तस्वीर/वीडियो नहीं है" message="इस यूज़र ने अभी तक कुछ अपलोड नहीं किया है।" />
                 ) : (
                     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                         {memories.map((m, idx) => (

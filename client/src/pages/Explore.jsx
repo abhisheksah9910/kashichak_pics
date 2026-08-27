@@ -28,9 +28,9 @@ export default function Explore() {
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="font-display text-3xl font-semibold sm:text-4xl">Explore Places</h1>
+          <h1 className="font-display text-3xl font-semibold sm:text-4xl">तस्वीरें और जगहें खोजें</h1>
           <p className="mt-2 text-ink-950/60 dark:text-terracotta-50/60">
-            Discover villages, towns, and landmarks preserved by the Kashichak community.
+            काशीचक की यादें, तस्वीरें और पुरानी जगहें देखें।
           </p>
         </div>
         <div className="flex overflow-hidden rounded-full border border-terracotta-200 dark:border-terracotta-800 shrink-0">
@@ -55,14 +55,14 @@ export default function Explore() {
               <input
                 value={filters.q}
                 onChange={(e) => setFilters((f) => ({ ...f, q: e.target.value }))}
-                placeholder="Search places..."
+                placeholder="नाम से खोजें..."
                 className="w-full bg-transparent text-sm outline-none"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-medium text-ink-950/70 dark:text-terracotta-50/70">State</label>
+            <label className="text-xs font-medium text-ink-950/70 dark:text-terracotta-50/70">राज्य (State)</label>
             <input
               value={filters.state}
               onChange={(e) => setFilters((f) => ({ ...f, state: e.target.value }))}
@@ -72,7 +72,7 @@ export default function Explore() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-medium text-ink-950/70 dark:text-terracotta-50/70">District</label>
+            <label className="text-xs font-medium text-ink-950/70 dark:text-terracotta-50/70">जिला (District)</label>
             <input
               value={filters.district}
               onChange={(e) => setFilters((f) => ({ ...f, district: e.target.value }))}
@@ -82,7 +82,7 @@ export default function Explore() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-medium text-ink-950/70 dark:text-terracotta-50/70">Sort By</label>
+            <label className="text-xs font-medium text-ink-950/70 dark:text-terracotta-50/70">क्रम (Sort By)</label>
             <select
               value={filters.sort}
               onChange={(e) => setFilters((f) => ({ ...f, sort: e.target.value }))}
@@ -98,7 +98,7 @@ export default function Explore() {
             onClick={() => setFilters({ q: '', state: '', district: '', sort: 'newest' })}
             className="w-full py-2 text-sm text-terracotta-600 hover:bg-terracotta-100 dark:hover:bg-terracotta-900/30 rounded-xl transition"
           >
-            Clear Filters
+            फिल्टर हटाएं
           </button>
 
           <div className="pt-4">
@@ -111,7 +111,7 @@ export default function Explore() {
           {loading ? (
             <GridSkeleton count={6} />
           ) : places.length === 0 ? (
-            <EmptyState title="No places found" message="Try adjusting your filters or search query." />
+            <EmptyState title="कुछ नहीं मिला" message="शायद नाम गलत है या कोई फिल्टर लगा है, कृपया दोबारा चेक करें।" />
           ) : view === 'grid' ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {places.map((p) => <PlaceCard key={p._id} place={p} />)}

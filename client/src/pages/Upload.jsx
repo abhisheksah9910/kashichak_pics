@@ -34,8 +34,8 @@ export default function Upload() {
   if (!user) {
     return (
       <div className="mx-auto max-w-lg px-4 py-24 text-center sm:px-6">
-        <h1 className="font-display text-2xl font-semibold">Log in to share a memory</h1>
-        <p className="mt-2 text-ink-950/60 dark:text-terracotta-50/60">Create a free account to upload photos and videos.</p>
+        <h1 className="font-display text-2xl font-semibold">फोटो/वीडियो शेयर करने के लिए लॉग इन करें</h1>
+        <p className="mt-2 text-ink-950/60 dark:text-terracotta-50/60">तस्वीरें और वीडियो अपलोड करने के लिए अकाउंट बनाएं।</p>
         <button onClick={() => navigate('/login')} className="btn-primary mt-6">Log in</button>
       </div>
     );
@@ -151,7 +151,7 @@ export default function Upload() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold">Share a Memory</h1>
+      <h1 className="font-display text-3xl font-semibold">फोटो / वीडियो जोड़ें</h1>
       <p className="mt-2 text-ink-950/60 dark:text-terracotta-50/60">Uploading as {user.name}.</p>
 
       {/* Stepper */}
@@ -169,7 +169,7 @@ export default function Upload() {
       <div className="card mt-8 p-6">
         {step === 0 && (
           <div>
-            <h2 className="font-display text-lg font-semibold">Select the place</h2>
+            <h2 className="font-display text-lg font-semibold">जगह चुनें (Select the place)</h2>
             
             {user?.role === 'admin' && !suggestingNew && (
               <div className="mt-4 mb-6 p-5 rounded-2xl bg-orange-50 border border-orange-200 dark:bg-orange-900/20 dark:border-orange-800 shadow-sm">
@@ -192,7 +192,7 @@ export default function Upload() {
               <>
                 <div className="mt-4 flex items-center gap-2 rounded-xl border border-terracotta-200 dark:border-terracotta-800 px-4 py-3">
                   <Search className="h-4 w-4 text-terracotta-400" />
-                  <input value={placeQuery} onChange={(e) => searchPlaces(e.target.value)} placeholder="Search Kashichak, Nawada, Bihar..." className="w-full bg-transparent text-sm outline-none" />
+                  <input value={placeQuery} onChange={(e) => searchPlaces(e.target.value)} placeholder="जगह का नाम खोजें (Search place)..." className="w-full bg-transparent text-sm outline-none" />
                 </div>
                 <div className="mt-3 max-h-64 space-y-1 overflow-y-auto">
                   {placeResults.map((p) => (
@@ -211,7 +211,7 @@ export default function Upload() {
                   <p className="mt-3 text-sm text-terracotta-600">Selected: {selectedPlace.name}</p>
                 )}
                 <button onClick={() => setSuggestingNew(true)} className="mt-4 text-sm font-medium text-terracotta-600 hover:underline">
-                  Can't find your place? Suggest a new one →
+                  जगह नहीं मिली? नई जगह का नाम बताएं →
                 </button>
               </>
             ) : (
@@ -235,7 +235,7 @@ export default function Upload() {
 
         {step === 1 && (
           <div>
-            <h2 className="font-display text-lg font-semibold">Upload your photos or videos</h2>
+            <h2 className="font-display text-lg font-semibold">अपनी फोटो या वीडियो चुनें</h2>
             
             {files.length > 0 && (
               <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -256,7 +256,7 @@ export default function Upload() {
                   className="flex aspect-square flex-col items-center justify-center rounded-xl border-2 border-dashed border-terracotta-300 dark:border-terracotta-800 text-terracotta-500 hover:bg-terracotta-50 dark:hover:bg-terracotta-900/20"
                 >
                   <UploadCloud className="h-6 w-6" />
-                  <span className="mt-2 text-xs font-medium">Add More</span>
+                  <span className="mt-2 text-xs font-medium">और जोड़ें</span>
                 </button>
               </div>
             )}
@@ -267,7 +267,7 @@ export default function Upload() {
                 className="mt-4 flex w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-terracotta-300 dark:border-terracotta-800 py-16 text-terracotta-500 hover:bg-terracotta-50 dark:hover:bg-terracotta-900/20"
               >
                 <UploadCloud className="h-10 w-10" />
-                <p className="mt-3 text-sm font-medium">Click to choose files</p>
+                <p className="mt-3 text-sm font-medium">फाइल चुनने के लिए क्लिक करें</p>
                 <p className="mt-1 text-xs text-ink-950/40 dark:text-terracotta-50/40">JPG, PNG, WEBP up to 15MB · MP4, MOV, WEBM up to 100MB</p>
                 <p className="mt-1 text-xs text-terracotta-600 dark:text-terracotta-400 font-medium">You can select multiple files</p>
               </button>
@@ -279,17 +279,17 @@ export default function Upload() {
 
         {step === 2 && (
           <div className="space-y-4">
-            <h2 className="font-display text-lg font-semibold">Tell its story</h2>
-            <input value={details.caption} onChange={(e) => setDetails({ ...details, caption: e.target.value })} placeholder="Caption / title" maxLength={150} className="input" />
-            <textarea value={details.story} onChange={(e) => setDetails({ ...details, story: e.target.value })} placeholder="The story behind this memory..." rows={4} className="input" />
+            <h2 className="font-display text-lg font-semibold">इसके बारे में बताएं</h2>
+            <input value={details.caption} onChange={(e) => setDetails({ ...details, caption: e.target.value })} placeholder="फोटो/वीडियो का नाम (Caption)" maxLength={150} className="input" />
+            <textarea value={details.story} onChange={(e) => setDetails({ ...details, story: e.target.value })} placeholder="इसके पीछे की कहानी (Story)..." rows={4} className="input" />
             <input type="date" value={details.dateCaptured} onChange={(e) => setDetails({ ...details, dateCaptured: e.target.value })} className="input" max={new Date().toISOString().split('T')[0]} />
-            <input value={details.tags} onChange={(e) => setDetails({ ...details, tags: e.target.value })} placeholder="Tags, comma separated (e.g. railway, festival)" className="input" />
+            <input value={details.tags} onChange={(e) => setDetails({ ...details, tags: e.target.value })} placeholder="Tags (जैसे: railway, festival)" className="input" />
           </div>
         )}
 
         {step === 3 && (
           <div>
-            <h2 className="font-display text-lg font-semibold">Review & submit</h2>
+            <h2 className="font-display text-lg font-semibold">चेक करें और अपलोड करें (Review)</h2>
             <dl className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">Place</dt><dd className="font-medium">{details.featuredLabel === 'historical' ? 'History Archive' : selectedPlace?.name}</dd></div>
               <div className="flex justify-between"><dt className="text-ink-950/50 dark:text-terracotta-50/50">Caption</dt><dd className="font-medium">{details.caption}</dd></div>
