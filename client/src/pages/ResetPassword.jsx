@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Landmark, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -23,22 +24,15 @@ export default function ResetPassword() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/reset-password/${token}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: passwords.password }),
-      });
-      const data = await res.json();
+      const res = await api.patch(`/auth/reset-password/${token}`, { password: passwords.password });
       
-      if (!res.ok) throw new Error(data.message || 'Something went wrong');
-      
-      localStorage.setItem('token', data.data.token);
+      localStorage.setItem('token', res.data.data.token);
       await loadUser(); // Reload user context since they are now logged in
       
-      toast.success('Password successfully reset! You are now logged in.');
+      toast.success(res.data.message || 'Password successfully reset! You are now logged in.');
       navigate('/');
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.message || 'Failed to reset password.');
     } finally {
       setLoading(false);
     }

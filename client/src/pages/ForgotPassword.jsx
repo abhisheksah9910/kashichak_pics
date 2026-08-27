@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Landmark, Mail, ArrowLeft, ArrowRight } from 'lucide-react';
+import api from '../services/api';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -13,19 +14,11 @@ export default function ForgotPassword() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      
-      if (!res.ok) throw new Error(data.message || 'Something went wrong');
-      
+      const res = await api.post('/auth/forgot-password', { email });
       setSubmitted(true);
-      toast.success('Password reset link sent to your email!');
+      toast.success(res.data.message || 'Password reset link sent to your email!');
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.message || 'Failed to send reset email.');
     } finally {
       setLoading(false);
     }
