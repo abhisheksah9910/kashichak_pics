@@ -159,12 +159,12 @@ export default function Home() {
                 onClick={handleInstallClick} 
                 className="btn-primary shadow-terracotta-600/20 shadow-lg bg-terracotta-500 hover:bg-terracotta-600 animate-pulse border-none w-full sm:w-auto flex justify-center"
               >
-                <Download className="h-4 w-4" /> Install App
+                <Download className="h-4 w-4" /> ऐप इंस्टॉल करें
               </button>
             )}
             
-            <Link to="/explore" className="btn-primary shadow-terracotta-600/20 shadow-lg w-full sm:w-auto flex justify-center"><Compass className="h-4 w-4" /> Explore</Link>
-            <Link to="/upload" className="btn-secondary !bg-white/10 !border-white/20 !text-white hover:!bg-white/20 w-full sm:w-auto flex justify-center"><UploadCloud className="h-4 w-4" /> Share Memory</Link>
+            <Link to="/explore" className="btn-primary shadow-terracotta-600/20 shadow-lg w-full sm:w-auto flex justify-center"><Compass className="h-4 w-4" /> देखें</Link>
+            <Link to="/upload" className="btn-secondary !bg-white/10 !border-white/20 !text-white hover:!bg-white/20 w-full sm:w-auto flex justify-center"><UploadCloud className="h-4 w-4" /> यादें साझा करें</Link>
           </motion.div>
         </div>
       </section>
