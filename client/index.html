@@ -16,6 +16,12 @@
     <link rel="icon" type="image/jpeg" href="/logo.jpg" />
     <link rel="apple-touch-icon" href="/logo.jpg" />
     <!-- PWA Manifest will be injected by vite-plugin-pwa -->
+    <script>
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        window.deferredPrompt = e;
+      });
+    </script>
     <title>Kashichak — Every Place Has a Story</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
