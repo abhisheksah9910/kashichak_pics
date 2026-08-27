@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { GridSkeleton } from '../components/Loader';
@@ -81,10 +80,7 @@ export default function Profile() {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+    <div 
       className="mx-auto max-w-5xl px-4 py-12 sm:px-6"
     >
       {/* Header */}
@@ -133,17 +129,14 @@ export default function Profile() {
             { label: 'Pending', value: stats.pendingUploads, icon: Clock },
             { label: 'Rejected', value: stats.rejectedUploads, icon: XCircle },
           ].map((s, i) => (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: i * 0.1 }}
+            <div 
               key={s.label} 
               className="card p-4 text-center"
             >
               <s.icon className="mx-auto h-5 w-5 text-terracotta-500" />
               <p className="mt-2 text-2xl font-semibold">{s.value}</p>
               <p className="text-xs text-ink-950/50 dark:text-terracotta-50/50">{s.label}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
@@ -181,10 +174,7 @@ export default function Profile() {
             {filteredMemories.map((m, i) => {
               const Icon = statusIcon[m.status] || Clock;
               return (
-                <motion.div 
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.05 }}
+                <div 
                   key={m._id} 
                   className="card flex items-center gap-4 p-4"
                 >
@@ -207,12 +197,12 @@ export default function Profile() {
                     <Icon className="h-4 w-4" />
                     {m.status}
                   </span>
-                </motion.div>
+                </div>
               );
             })}
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }

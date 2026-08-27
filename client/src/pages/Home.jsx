@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Compass, UploadCloud, MapPin, Camera, PenLine, Archive, Trophy, Download, Play } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import api from '../services/api';
@@ -45,26 +44,16 @@ const TypewriterText = ({ texts, typingSpeed = 80, deletingSpeed = 40, pause = 2
       <span className="font-mono bg-gradient-to-r from-terracotta-400 via-orange-400 to-terracotta-500 bg-clip-text text-transparent py-2 leading-normal">
         {displayedText}
       </span>
-      <motion.span 
-        animate={{ opacity: [1, 0, 1] }} 
-        transition={{ repeat: Infinity, duration: 0.8 }}
-        className="text-terracotta-500 font-light ml-1"
-      >
+      <span className="text-terracotta-500 font-light ml-1 animate-pulse">
         |
-      </motion.span>
+      </span>
     </>
   );
 };
 
 const AnimatedDivider = () => (
   <div className="flex justify-center w-full my-4 opacity-60">
-    <div className="h-[2px] w-full max-w-5xl bg-gradient-to-r from-transparent via-terracotta-500/50 to-transparent relative overflow-hidden">
-      <motion.div
-        animate={{ x: ["-100%", "300%"] }}
-        transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
-        className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-orange-300 to-transparent opacity-80"
-      />
-    </div>
+    <div className="h-[2px] w-full max-w-5xl bg-gradient-to-r from-transparent via-terracotta-500/50 to-transparent relative overflow-hidden" />
   </div>
 );
 
@@ -143,8 +132,8 @@ export default function Home() {
       <section className="relative overflow-hidden bg-ink-950 text-white">
         {/* Animated subtle background blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 8, repeat: Infinity }} className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-terracotta-600/30 blur-[100px]" />
-          <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }} transition={{ duration: 10, repeat: Infinity, delay: 1 }} className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-orange-600/20 blur-[120px]" />
+          <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-terracotta-600/30 blur-[100px]" />
+          <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-orange-600/20 blur-[120px]" />
         </div>
         
         <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32 flex flex-col justify-center min-h-[350px]">
@@ -152,12 +141,7 @@ export default function Home() {
             <TypewriterText texts={["Welcome to Kashichak", "अपना काशीचक में आपका स्वागत है"]} />
           </h1>
           
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
-          >
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             {/* Install App Button */}
             {!isStandalone && (
               <button 
@@ -170,20 +154,14 @@ export default function Home() {
             
             <Link to="/explore" className="btn-primary shadow-terracotta-600/20 shadow-lg w-full sm:w-auto flex justify-center"><Compass className="h-4 w-4" /> देखें</Link>
             <Link to="/upload" className="btn-secondary !bg-white/10 !border-white/20 !text-white hover:!bg-white/20 w-full sm:w-auto flex justify-center"><UploadCloud className="h-4 w-4" /> यादें साझा करें</Link>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       <AnimatedDivider />
 
       {/* Popular places */}
-      <motion.section 
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.6 }}
-        className="mx-auto max-w-7xl px-4 py-16 sm:px-6"
-      >
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
         <div className="mb-8 flex items-end justify-between">
           <h2 className="font-display text-2xl font-semibold sm:text-3xl">Popular Places</h2>
           <Link to="/explore" className="text-sm font-medium text-terracotta-600 hover:underline">View all</Link>
@@ -197,7 +175,7 @@ export default function Home() {
             {places.map((p) => <PlaceCard key={p._id} place={p} />)}
           </div>
         )}
-      </motion.section>
+      </section>
 
       {/* Featured memory */}
       {featured && (
@@ -237,7 +215,7 @@ export default function Home() {
       <AnimatedDivider />
 
       {/* Latest memories */}
-      <motion.section 
+      <section 
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -256,7 +234,7 @@ export default function Home() {
             ))}
           </div>
         )}
-      </motion.section>
+      </section>
 
       <AnimatedDivider />
 

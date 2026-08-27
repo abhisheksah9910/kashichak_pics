@@ -38,5 +38,8 @@ const memorySchema = new mongoose.Schema(
 
 memorySchema.index({ caption: 'text', story: 'text', tags: 'text' });
 memorySchema.index({ place: 1, status: 1, dateCaptured: -1 });
+memorySchema.index({ place: 1, status: 1, createdAt: -1 });
+memorySchema.index({ uploader: 1, status: 1, createdAt: -1 });
+memorySchema.index({ featuredLabel: 1, status: 1, dateCaptured: -1 });
 
 module.exports = mongoose.model('Memory', memorySchema);

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { motion } from 'framer-motion';
 import { Landmark, Mail, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { GoogleLogin } from '@react-oauth/google';
@@ -46,14 +45,10 @@ export default function Login() {
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-ink-950 p-16 relative overflow-hidden">
         {/* Background blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.6, 0.4] }}
-            transition={{ duration: 8, repeat: Infinity }}
+          <div
             className="absolute -top-1/4 -left-1/4 w-2/3 h-2/3 rounded-full bg-terracotta-600/30 blur-[120px]"
           />
-          <motion.div
-            animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
-            transition={{ duration: 10, repeat: Infinity, delay: 2 }}
+          <div
             className="absolute -bottom-1/4 -right-1/4 w-2/3 h-2/3 rounded-full bg-orange-500/20 blur-[150px]"
           />
         </div>
@@ -66,11 +61,7 @@ export default function Login() {
         </div>
 
         <div className="relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
+          <div>
             <p className="font-display text-4xl font-bold text-white leading-snug">
               Every place<br />
               <span className="text-terracotta-400">has a story.</span>
@@ -78,7 +69,7 @@ export default function Login() {
             <p className="mt-4 text-terracotta-100/60 text-lg">
               Log in to preserve and explore the memories of your village.
             </p>
-          </motion.div>
+          </div>
         </div>
 
         <div className="relative z-10">
@@ -88,12 +79,8 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Right form panel */}
       <div className="flex w-full lg:w-1/2 flex-col justify-center px-6 py-16 sm:px-12 lg:px-20 bg-white dark:bg-ink-950">
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
+        <div
           className="mx-auto w-full max-w-sm"
         >
           {/* Mobile logo */}
@@ -167,7 +154,7 @@ export default function Login() {
               Sign up free
             </Link>
           </p>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

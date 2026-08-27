@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { Search, MapPin, UploadCloud, X, CheckCircle2, ArrowLeft, ArrowRight, Archive } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import imageCompression from 'browser-image-compression';
 
 const STEPS = ['Location', 'Media', 'Details', 'Review'];
 
@@ -59,28 +60,46 @@ export default function Upload() {
     }
   };
 
-  const handleFileSelect = (selectedFiles) => {
+  const handleFileSelect = async (selectedFiles) => {
     if (!selectedFiles || selectedFiles.length === 0) return;
     
     const newFiles = [];
     const newPreviews = [];
 
-    Array.from(selectedFiles).forEach(f => {
+    const toastId = toast.loading('Processing files...');
+
+    for (const f of Array.from(selectedFiles)) {
       const isImage = f.type.startsWith('image/');
       const isVideo = f.type.startsWith('video/');
       if (!isImage && !isVideo) {
         toast.error(`${f.name} is not an image or video.`);
-        return;
+        continue;
       }
       const maxMB = isImage ? 15 : 100;
       if (f.size > maxMB * 1024 * 1024) {
         toast.error(`${f.name} is too large. Max ${maxMB}MB.`);
-        return;
+        continue;
       }
-      newFiles.push(f);
-      newPreviews.push(URL.createObjectURL(f));
-    });
 
+      let fileToAdd = f;
+      if (isImage) {
+        try {
+          const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+          };
+          fileToAdd = await imageCompression(f, options);
+        } catch (error) {
+          console.error('Image compression error:', error);
+        }
+      }
+
+      newFiles.push(fileToAdd);
+      newPreviews.push(URL.createObjectURL(fileToAdd));
+    }
+
+    toast.dismiss(toastId);
     setFiles(prev => [...prev, ...newFiles]);
     setPreviews(prev => [...prev, ...newPreviews]);
   };

@@ -106,24 +106,10 @@ async function uploadFile({ buffer, originalName, mimeType }) {
     },
   });
 
-  /**
-   * For images: use lh3.googleusercontent.com/d/{fileId} — Google's public CDN.
-   *   Files are already made public above, so this URL works directly in the browser
-   *   without any proxy, authentication, or CORS issues.
-   * For videos: stream through our proxy (GET /api/media/:fileId) because the lh3
-   *   CDN only serves image formats.
-   */
-  const isImage = mimeType.startsWith('image/');
-  const serverBase = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 5000}`;
-
-  const mediaUrl = isImage
-    ? `https://lh3.googleusercontent.com/d/${fileId}`
-    : `${serverBase}/api/media/${fileId}`;
-
-  // For videos, use Google Drive's built-in thumbnail API (shows an actual frame from the video)
-  const thumbnailUrl = isImage
-    ? `https://lh3.googleusercontent.com/d/${fileId}`
-    : `https://drive.google.com/thumbnail?id=${fileId}&sz=w640`;
+  // Serve all media (images & video) through our backend proxy
+  // This bypasses Google Drive's 403 Forbidden issues and CORS blocks.
+  const mediaUrl = `/api/media/${fileId}`;
+  const thumbnailUrl = `/api/media/${fileId}`;
 
   return {
     fileId,

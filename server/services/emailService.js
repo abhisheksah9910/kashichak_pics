@@ -12,16 +12,16 @@ const sendOTPEmail = async (email, name, otp) => {
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: email,
-    subject: 'Verify your email - Kashichak',
+    subject: 'अपना ईमेल वेरीफाई करें - Kashichak',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 30px;">
         <h1 style="color: #c2410c;">Kashichak</h1>
 
-        <h2>Hello ${name} 👋</h2>
+        <h2>नमस्ते ${name} 👋</h2>
 
-        <p>Thank you for signing up with Kashichak.</p>
+        <p>Kashichak के साथ जुड़ने के लिए धन्यवाद।</p>
 
-        <p>Your email verification OTP is:</p>
+        <p>आपका ईमेल वेरिफिकेशन OTP है:</p>
 
         <div style="
           font-size: 32px;
@@ -36,13 +36,13 @@ const sendOTPEmail = async (email, name, otp) => {
           ${otp}
         </div>
 
-        <p>This OTP will expire in <strong>10 minutes</strong>.</p>
+        <p>यह OTP <strong>10 मिनट</strong> में एक्सपायर हो जाएगा।</p>
 
-        <p>If you did not create this account, please ignore this email.</p>
+        <p>अगर आपने यह अकाउंट नहीं बनाया है, तो कृपया इस ईमेल को अनदेखा करें।</p>
 
         <br />
 
-        <p>Regards,<br /><strong>Kashichak Team</strong></p>
+        <p>धन्यवाद,<br /><strong>Kashichak Team</strong></p>
       </div>
     `,
   });
@@ -52,16 +52,16 @@ const sendPasswordResetEmail = async (email, name, resetUrl) => {
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: email,
-    subject: 'Reset your password - Kashichak',
+    subject: 'अपना पासवर्ड रीसेट करें - Kashichak',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 30px;">
         <h1 style="color: #c2410c;">Kashichak</h1>
 
-        <h2>Hello ${name},</h2>
+        <h2>नमस्ते ${name},</h2>
 
-        <p>You requested a password reset for your Kashichak account.</p>
+        <p>आपने अपने Kashichak अकाउंट का पासवर्ड रीसेट करने का अनुरोध किया है।</p>
 
-        <p>Please click the button below to reset your password:</p>
+        <p>कृपया अपना पासवर्ड रीसेट करने के लिए नीचे दिए गए बटन पर क्लिक करें:</p>
 
         <a href="${resetUrl}" style="
           display: inline-block;
@@ -73,16 +73,16 @@ const sendPasswordResetEmail = async (email, name, resetUrl) => {
           border-radius: 5px;
           font-weight: bold;
         ">
-          Reset Password
+          पासवर्ड रीसेट करें
         </a>
 
-        <p>This link will expire in <strong>1 hour</strong>.</p>
+        <p>यह लिंक <strong>1 घंटे</strong> में एक्सपायर हो जाएगा।</p>
 
-        <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
+        <p>अगर आपने पासवर्ड रीसेट करने का अनुरोध नहीं किया था, तो कृपया इस ईमेल को अनदेखा करें या हमारे सपोर्ट से संपर्क करें।</p>
 
         <br />
 
-        <p>Regards,<br /><strong>Kashichak Team</strong></p>
+        <p>धन्यवाद,<br /><strong>Kashichak Team</strong></p>
       </div>
     `,
   });

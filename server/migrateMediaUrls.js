@@ -38,61 +38,45 @@ async function run() {
   );
 
   // ---- Fix Memory.mediaUrl & Memory.thumbnailUrl ----
-  const memories = await Memory.find({
-    $or: [
-      { mediaUrl: /localhost/ },
-      { thumbnailUrl: /localhost/ },
-    ],
-  });
-
-  console.log(`Found ${memories.length} memories with localhost proxy URLs.`);
-
+  const memories = await Memory.find({});
   let memUpdated = 0;
   for (const mem of memories) {
     const fileId = mem.googleDriveFileId;
-    if (!fileId) {
-      console.warn(`  Skipping memory ${mem._id} — no googleDriveFileId`);
-      continue;
+    if (!fileId) continue;
+
+    let updated = false;
+    if (mem.mediaUrl && !mem.mediaUrl.startsWith('/api/media/')) {
+      mem.mediaUrl = `/api/media/${fileId}`;
+      updated = true;
+    }
+    if (mem.thumbnailUrl && !mem.thumbnailUrl.startsWith('/api/media/')) {
+      mem.thumbnailUrl = `/api/media/${fileId}`;
+      updated = true;
     }
 
-    if (mem.mediaType === 'photo') {
-      // Photos: use lh3.googleusercontent.com (public CDN, no proxy needed)
-      mem.mediaUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
-      mem.thumbnailUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
+    if (updated) {
+      await mem.save();
+      memUpdated++;
+      console.log(`  ✅ Memory ${mem._id} → /api/media/${fileId}`);
     }
-    // Videos: keep proxy URL but ensure correct format
-    // (proxy is still needed for video streaming)
-
-    await mem.save();
-    memUpdated++;
-    console.log(`  ✅ Memory ${mem._id} (${mem.mediaType}) → ${mem.mediaUrl}`);
   }
-
   console.log(`\nMemories updated: ${memUpdated}\n`);
 
   // ---- Fix Place.coverImage ----
-  const places = await Place.find({ coverImage: /localhost/ });
-  console.log(`Found ${places.length} places with localhost coverImage.`);
-
+  const places = await Place.find({});
   let placeUpdated = 0;
   for (const pl of places) {
-    // Find the first approved photo for this place and use its lh3 URL
-    const firstPhoto = await Memory.findOne({
-      place: pl._id,
-      status: 'approved',
-      mediaType: 'photo',
-    });
-
+    const firstPhoto = await Memory.findOne({ place: pl._id, status: 'approved' });
     if (firstPhoto && firstPhoto.googleDriveFileId) {
-      pl.coverImage = `https://lh3.googleusercontent.com/d/${firstPhoto.googleDriveFileId}`;
-      await pl.save();
-      placeUpdated++;
-      console.log(`  ✅ Place "${pl.name}" coverImage → ${pl.coverImage}`);
-    } else {
-      console.warn(`  ⚠️  Place "${pl.name}" — no approved photo found, skipping`);
+      const expectedUrl = `/api/media/${firstPhoto.googleDriveFileId}`;
+      if (pl.coverImage !== expectedUrl) {
+        pl.coverImage = expectedUrl;
+        await pl.save();
+        placeUpdated++;
+        console.log(`  ✅ Place "${pl.name}" coverImage → ${expectedUrl}`);
+      }
     }
   }
-
   console.log(`\nPlaces updated: ${placeUpdated}`);
   console.log('\nAll done! 🎉');
   await mongoose.disconnect();

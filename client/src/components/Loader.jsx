@@ -25,3 +25,11 @@ export function Spinner({ className = 'h-6 w-6' }) {
     <div className={`${className} animate-spin rounded-full border-2 border-terracotta-200 border-t-terracotta-600`} />
   );
 }
+
+export function PageLoader() {
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center">
+      <Spinner className="h-8 w-8" />
+    </div>
+  );
+}

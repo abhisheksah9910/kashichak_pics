@@ -257,14 +257,14 @@ const toggleLike = async (req, res, next) => {
       await Notification.create({
         user: memory.uploader,
         type: 'memory_liked',
-        message: `${req.user.name || 'Someone'} liked your memory.`,
+        message: `${req.user.name || 'किसी'} ने आपकी याद को लाइक किया।`,
         relatedMemory: memory._id,
       });
 
       // Send push notification
       await sendPushToUser(memory.uploader, {
-        title: 'New Like! ❤️',
-        body: `${req.user.name || 'Someone'} liked your photo.`,
+        title: 'नया लाइक! ❤️',
+        body: `${req.user.name || 'किसी'} ने आपकी फोटो को लाइक किया।`,
         url: `/places/${memory.place}`,
         icon: req.user.profileImage || '/pwa-192x192.png'
       });
@@ -326,14 +326,14 @@ const addComment = async (req, res, next) => {
       await Notification.create({
         user: memory.uploader,
         type: 'memory_commented',
-        message: `${req.user.name || 'Someone'} commented on your memory.`,
+        message: `${req.user.name || 'किसी'} ने आपकी याद पर टिप्पणी की।`,
         relatedMemory: memory._id,
       });
 
       // Send push notification
       await sendPushToUser(memory.uploader, {
-        title: 'New Comment! 💬',
-        body: `${req.user.name || 'Someone'} commented: "${text.substring(0, 30)}${text.length > 30 ? '...' : ''}"`,
+        title: 'नई टिप्पणी! 💬',
+        body: `${req.user.name || 'किसी'} ने टिप्पणी की: "${text.substring(0, 30)}${text.length > 30 ? '...' : ''}"`,
         url: `/places/${memory.place}`,
         icon: req.user.profileImage || '/pwa-192x192.png'
       });
