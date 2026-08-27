@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MapPin, Image, Video, Users, CalendarClock, X, Heart, Flag, ChevronLeft, ChevronRight, Share2 } from 'lucide-react';
+import { MapPin, Image, Video, Users, CalendarClock, X, Heart, Flag, ChevronLeft, ChevronRight, Share2, PlayCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -19,7 +19,7 @@ export default function PlaceDetails() {
   const [timeline, setTimeline] = useState([]);
   const [tab, setTab] = useState('Photos');
   const [loading, setLoading] = useState(true);
-  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const [lightboxData, setLightboxData] = useState({ index: null, items: [] });
   const [coverError, setCoverError] = useState(false);
 
   useEffect(() => {
@@ -48,7 +48,15 @@ export default function PlaceDetails() {
     if (!user) return toast.error('Please log in to like memories.');
     try {
       const res = await api.post(`/memories/${memoryId}/like`);
-      setMemories((prev) => prev.map((m, i) => (i === idx ? { ...m, likeCount: res.data.data.likeCount, isLiked: res.data.data.liked } : m)));
+      
+      // Update in main memories
+      setMemories((prev) => prev.map((m) => (m._id === memoryId ? { ...m, likeCount: res.data.data.likeCount, isLiked: res.data.data.liked } : m)));
+      
+      // Update in lightbox data
+      setLightboxData(prev => ({
+        ...prev,
+        items: prev.items.map(m => m._id === memoryId ? { ...m, likeCount: res.data.data.likeCount, isLiked: res.data.data.liked } : m)
+      }));
     } catch (err) {
       toast.error(err.message);
     }
@@ -70,7 +78,8 @@ export default function PlaceDetails() {
       await api.delete(`/memories/${memoryId}`);
       toast.success('Memory deleted.');
       setMemories((prev) => prev.filter((m) => m._id !== memoryId));
-      setLightboxIndex(null);
+      setTimeline((prev) => prev.map(g => ({ ...g, memories: g.memories.filter(m => m._id !== memoryId) })).filter(g => g.memories.length > 0));
+      setLightboxData({ index: null, items: [] });
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
     }
@@ -86,6 +95,11 @@ export default function PlaceDetails() {
       const res = await api.put(`/memories/${memory._id}`, { caption: newCaption, story: newStory });
       toast.success('Memory updated.');
       setMemories((prev) => prev.map((m) => (m._id === memory._id ? { ...m, caption: newCaption, story: newStory } : m)));
+      setTimeline((prev) => prev.map(g => ({ ...g, memories: g.memories.map(m => m._id === memory._id ? { ...m, caption: newCaption, story: newStory } : m) })));
+      setLightboxData(prev => ({
+        ...prev,
+        items: prev.items.map(m => m._id === memory._id ? { ...m, caption: newCaption, story: newStory } : m)
+      }));
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
     }
@@ -205,7 +219,11 @@ export default function PlaceDetails() {
                       <h3 className="font-display text-2xl font-semibold text-terracotta-700 dark:text-terracotta-300">{group._id}</h3>
                       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-6">
                         {group.memories.map((m) => (
-                          <div key={m._id} className="relative group cursor-pointer" onClick={() => setLightboxMemory(m)}>
+                          <div key={m._id} className="relative group cursor-pointer" onClick={() => {
+                            const allTimelineMemories = timeline.flatMap(g => g.memories);
+                            const idx = allTimelineMemories.findIndex(fm => fm._id === m._id);
+                            setLightboxData({ index: idx, items: allTimelineMemories });
+                          }}>
                             {m.mediaType === 'video' ? (
                               <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-black/10">
                                 <video src={`${getMediaUrl(m.thumbnailUrl || m.mediaUrl)}#t=0.001`} preload="metadata" muted playsInline className="h-full w-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -228,7 +246,7 @@ export default function PlaceDetails() {
           ) : (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {memories.map((m, idx) => (
-                <MemoryCard key={m._id} memory={m} onClick={() => setLightboxIndex(idx)} />
+                <MemoryCard key={m._id} memory={m} onClick={() => setLightboxData({ index: idx, items: memories })} />
               ))}
             </div>
           )}
@@ -236,18 +254,18 @@ export default function PlaceDetails() {
       </div>
 
       {/* Lightbox */}
-      {lightboxIndex !== null && memories[lightboxIndex] && (
+      {lightboxData.index !== null && lightboxData.items[lightboxData.index] && (
         <Lightbox
-          memory={memories[lightboxIndex]}
+          memory={lightboxData.items[lightboxData.index]}
           currentUser={user}
-          onClose={() => setLightboxIndex(null)}
-          onPrev={() => setLightboxIndex((i) => (i > 0 ? i - 1 : i))}
-          onNext={() => setLightboxIndex((i) => (i < memories.length - 1 ? i + 1 : i))}
-          onLike={() => handleLike(memories[lightboxIndex]._id, lightboxIndex)}
-          onReport={() => handleReport(memories[lightboxIndex]._id)}
-          onDelete={() => handleDeleteMemory(memories[lightboxIndex]._id)}
-          onEdit={() => handleEditMemory(memories[lightboxIndex])}
-          onSetCover={() => handleSetCover(memories[lightboxIndex].mediaUrl)}
+          onClose={() => setLightboxData({ index: null, items: [] })}
+          onPrev={() => setLightboxData(prev => ({ ...prev, index: prev.index > 0 ? prev.index - 1 : prev.index }))}
+          onNext={() => setLightboxData(prev => ({ ...prev, index: prev.index < prev.items.length - 1 ? prev.index + 1 : prev.index }))}
+          onLike={() => handleLike(lightboxData.items[lightboxData.index]._id, lightboxData.index)}
+          onReport={() => handleReport(lightboxData.items[lightboxData.index]._id)}
+          onDelete={() => handleDeleteMemory(lightboxData.items[lightboxData.index]._id)}
+          onEdit={() => handleEditMemory(lightboxData.items[lightboxData.index])}
+          onSetCover={() => handleSetCover(lightboxData.items[lightboxData.index].mediaUrl)}
         />
       )}
     </div>
