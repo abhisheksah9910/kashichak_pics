@@ -83,11 +83,7 @@ export default function History() {
       <div className="bg-ink-950 text-white pb-12 pt-16 px-4 border-b border-ink-900">
         <div className="mx-auto max-w-7xl text-center">
           <Archive className="mx-auto h-12 w-12 text-terracotta-400 mb-4" />
-          <h1 className="font-display text-4xl font-semibold sm:text-5xl">इतिहास के पन्नों से</h1>
-          <p className="mt-4 text-ink-300 max-w-2xl mx-auto">
-            A dedicated archive of old photos and videos that capture the essence of Kashichak from days gone by. 
-            <span className="block mt-1 font-serif italic">"वक्त बदल गया, पर यादें आज भी वहीं खड़ी हैं।"</span>
-          </p>
+          <h1 className="font-display text-4xl font-semibold sm:text-5xl mb-2">काशीचक की पुरानी यादें</h1>
         </div>
       </div>
 
