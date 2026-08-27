@@ -8,6 +8,7 @@ import { GridSkeleton, Spinner } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
 import Lightbox from '../components/Lightbox';
 import MemoryCard from '../components/MemoryCard';
+import { getMediaUrl } from '../utils/mediaUtils';
 
 export default function PlaceDetails() {
   const { slug } = useParams();
@@ -123,9 +124,9 @@ export default function PlaceDetails() {
   return (
     <div>
       {/* Cover */}
-      <div className="relative h-72 w-full overflow-hidden bg-terracotta-100 dark:bg-terracotta-900/30 sm:h-96">
+      <div className="relative h-64 w-full md:h-96">
         {place.coverImage ? (
-          <img src={place.coverImage} alt={place.name} className="h-full w-full object-cover" />
+          <img src={getMediaUrl(place.coverImage)} alt={place.name} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center"><MapPin className="h-16 w-16 text-terracotta-300" /></div>
         )}
@@ -198,7 +199,17 @@ export default function PlaceDetails() {
                       <h3 className="font-display text-2xl font-semibold text-terracotta-700 dark:text-terracotta-300">{group._id}</h3>
                       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-6">
                         {group.memories.map((m) => (
-                          <img key={m._id} src={m.thumbnailUrl} alt={m.caption} className="aspect-square w-full rounded-xl object-cover" />
+                          <div key={m._id} className="relative group cursor-pointer" onClick={() => setLightboxMemory(m)}>
+                            {m.mediaType === 'video' ? (
+                              <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-black/10">
+                                <video src={getMediaUrl(m.thumbnailUrl || m.mediaUrl)} className="h-full w-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                                <PlayCircle className="absolute inset-0 m-auto h-8 w-8 text-white drop-shadow-md" />
+                              </div>
+                            ) : (
+                              <img src={getMediaUrl(m.thumbnailUrl || m.mediaUrl)} alt={m.caption} className="aspect-square w-full rounded-xl object-cover" />
+                            )}
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-xl" />
+                          </div>
                         ))}
                       </div>
                     </div>

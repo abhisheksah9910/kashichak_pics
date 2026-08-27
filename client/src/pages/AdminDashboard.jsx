@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { getMediaUrl } from '../utils/mediaUtils';
 import {
   Users,
   MapPin,
@@ -467,27 +468,15 @@ export default function AdminDashboard() {
 
                     {memory.mediaType === 'video' ? (
                       <video
-                        src={memory.mediaUrl}
+                        src={getMediaUrl(memory.mediaUrl)}
                         controls
                         className="h-full w-full object-cover"
                       />
                     ) : (
                       <img
-                        src={
-                          memory.thumbnailUrl ||
-                          `https://drive.google.com/thumbnail?id=${memory.googleDriveFileId}&sz=w800`
-                        }
+                        src={getMediaUrl(memory.thumbnailUrl || memory.mediaUrl)}
                         alt={memory.caption || 'Uploaded image'}
                         className="h-full w-full object-cover"
-                        onError={(event) => {
-                          console.error(
-                            'Thumbnail failed:',
-                            event.currentTarget.src
-                          );
-
-                          event.currentTarget.src =
-                            `https://drive.google.com/thumbnail?id=${memory.googleDriveFileId}&sz=w400`;
-                        }}
                       />
                     )}
 
@@ -692,9 +681,9 @@ export default function AdminDashboard() {
                 <div key={memory._id} className="card flex flex-col gap-4 p-4 sm:flex-row">
                   <div className="h-40 w-full shrink-0 overflow-hidden rounded-xl bg-black/10 sm:w-56">
                     {memory.mediaType === 'video' ? (
-                      <video src={memory.mediaUrl} controls className="h-full w-full object-cover" />
+                      <video src={getMediaUrl(memory.mediaUrl)} controls className="h-full w-full object-cover" />
                     ) : (
-                      <img src={memory.thumbnailUrl || memory.mediaUrl} alt={memory.caption} className="h-full w-full object-cover" />
+                      <img src={getMediaUrl(memory.thumbnailUrl || memory.mediaUrl)} alt={memory.caption} className="h-full w-full object-cover" />
                     )}
                   </div>
                   <div className="flex-1">

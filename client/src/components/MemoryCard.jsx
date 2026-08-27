@@ -1,11 +1,12 @@
 import { PlayCircle, Heart, Share2 } from 'lucide-react';
+import { getMediaUrl } from '../utils/mediaUtils';
 
 export default function MemoryCard({ memory, onClick }) {
   return (
     <button onClick={onClick} className="card group relative flex flex-col h-full w-full overflow-hidden text-left">
       <div className="relative w-full aspect-square sm:aspect-[4/3] shrink-0 overflow-hidden bg-terracotta-100 dark:bg-terracotta-900/30">
         <img
-          src={memory.thumbnailUrl || memory.mediaUrl}
+          src={getMediaUrl(memory.thumbnailUrl || memory.mediaUrl)}
           alt={memory.caption}
           loading="lazy"
           className="w-full h-full object-cover transition duration-500 group-hover:scale-105"

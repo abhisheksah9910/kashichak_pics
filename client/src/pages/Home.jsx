@@ -8,6 +8,7 @@ import MemoryCard from '../components/MemoryCard';
 import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
 import AdBanner from '../components/AdBanner';
+import { getMediaUrl } from '../utils/mediaUtils';
 
 const TypewriterText = ({ texts, typingSpeed = 80, deletingSpeed = 40, pause = 2500 }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -185,7 +186,7 @@ export default function Home() {
             <div className="grid gap-8 overflow-hidden rounded-3xl bg-white dark:bg-ink-950 shadow-soft md:grid-cols-2">
               {featured.mediaType === 'video' ? (
                 <div className="relative h-72 w-full md:h-full cursor-pointer group" onClick={() => navigate(`/places/${featured.place?.slug}`)}>
-                  <video src={featured.mediaUrl} className="h-full w-full object-cover" autoPlay muted loop playsInline />
+                  <video src={getMediaUrl(featured.mediaUrl)} className="h-full w-full object-cover" autoPlay muted loop playsInline />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors flex items-center justify-center">
                     <div className="h-14 w-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 ml-1">
@@ -195,7 +196,7 @@ export default function Home() {
                   </div>
                 </div>
               ) : (
-                <img src={featured.mediaUrl} alt={featured.caption} className="h-72 w-full object-cover md:h-full cursor-pointer" onClick={() => navigate(`/places/${featured.place?.slug}`)} />
+                <img src={getMediaUrl(featured.mediaUrl)} alt={featured.caption} className="h-72 w-full object-cover md:h-full cursor-pointer" onClick={() => navigate(`/places/${featured.place?.slug}`)} />
               )}
               <div className="flex flex-col justify-center p-8">
                 <p className="text-xs font-medium uppercase tracking-wide text-terracotta-600">

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MapPin, Image, Video } from 'lucide-react';
+import { getMediaUrl } from '../utils/mediaUtils';
 import { useState } from 'react';
 
 export default function PlaceCard({ place }) {
@@ -19,7 +20,7 @@ export default function PlaceCard({ place }) {
       <div className="relative h-44 w-full overflow-hidden bg-terracotta-100 dark:bg-terracotta-900/30">
         {hasValidImage ? (
           <img
-            src={place.coverImage}
+            src={getMediaUrl(place.coverImage)}
             alt={place.name || 'Place'}
             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
             onError={() => {

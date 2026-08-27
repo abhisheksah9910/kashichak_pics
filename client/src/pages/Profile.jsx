@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getMediaUrl } from '../utils/mediaUtils';
 import api from '../services/api';
 import { GridSkeleton } from '../components/Loader';
 import EmptyState from '../components/EmptyState';
@@ -180,7 +181,7 @@ export default function Profile() {
                 >
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-terracotta-100 dark:bg-terracotta-900/30">
                     <img
-                      src={m.thumbnailUrl || m.mediaUrl}
+                      src={getMediaUrl(m.thumbnailUrl || m.mediaUrl)}
                       alt={m.caption}
                       className="h-full w-full object-cover"
                       onError={(e) => { e.currentTarget.style.display = 'none'; }}

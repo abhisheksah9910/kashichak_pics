@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { X, ChevronLeft, ChevronRight, Heart, Flag, MessageCircle, Share2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getMediaUrl } from '../utils/mediaUtils';
 import api from '../services/api';
 
 export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext, onLike, onReport, onDelete, onEdit, onSetCover }) {
@@ -92,9 +93,9 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
                 <div className="relative bg-black flex items-center justify-center
                     h-[58dvh] md:h-auto md:flex-1">
                     {memory.mediaType === 'video' ? (
-                        <video src={memory.mediaUrl} controls autoPlay className="max-h-[58dvh] md:max-h-[90vh] w-full object-contain" />
+                        <video src={getMediaUrl(memory.mediaUrl)} controls autoPlay className="max-h-[58dvh] md:max-h-[90vh] w-full object-contain" />
                     ) : (
-                        <img src={memory.mediaUrl} alt={memory.caption} className="max-h-[58dvh] md:max-h-[90vh] w-full object-contain" />
+                        <img src={getMediaUrl(memory.mediaUrl)} alt={memory.caption} className="max-h-[58dvh] md:max-h-[90vh] w-full object-contain" />
                     )}
 
                     {/* Mobile arrows on media */}
