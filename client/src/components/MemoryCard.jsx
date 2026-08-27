@@ -8,7 +8,7 @@ export default function MemoryCard({ memory, onClick }) {
         {memory.mediaType === 'video' ? (
           <>
             <video
-              src={getMediaUrl(memory.mediaUrl)}
+              src={`${getMediaUrl(memory.mediaUrl)}#t=0.001`}
               className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
               preload="metadata"
               muted

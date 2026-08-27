@@ -133,8 +133,13 @@ async function deleteFile(fileId) {
  * Get a readable stream for a Google Drive file.
  * Useful for streaming videos or files through the backend.
  */
-async function getFileStream(fileId) {
+async function getFileStream(fileId, reqHeaders = {}) {
   const drive = getDriveClient();
+
+  const headers = {};
+  if (reqHeaders.range) {
+    headers.Range = reqHeaders.range;
+  }
 
   const response = await drive.files.get(
     {
@@ -143,10 +148,11 @@ async function getFileStream(fileId) {
     },
     {
       responseType: 'stream',
+      headers,
     }
   );
 
-  return response.data;
+  return response;
 }
 
 module.exports = {

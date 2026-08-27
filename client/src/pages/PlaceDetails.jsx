@@ -202,8 +202,8 @@ export default function PlaceDetails() {
                           <div key={m._id} className="relative group cursor-pointer" onClick={() => setLightboxMemory(m)}>
                             {m.mediaType === 'video' ? (
                               <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-black/10">
-                                <video src={getMediaUrl(m.thumbnailUrl || m.mediaUrl)} className="h-full w-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
-                                <PlayCircle className="absolute inset-0 m-auto h-8 w-8 text-white drop-shadow-md" />
+                                <video src={`${getMediaUrl(m.thumbnailUrl || m.mediaUrl)}#t=0.001`} preload="metadata" muted playsInline className="h-full w-full object-cover opacity-70 group-hover:opacity-100 transition-opacity" />
+                                <PlayCircle className="absolute inset-0 m-auto h-8 w-8 text-white drop-shadow-md pointer-events-none" />
                               </div>
                             ) : (
                               <img src={getMediaUrl(m.thumbnailUrl || m.mediaUrl)} alt={m.caption} className="aspect-square w-full rounded-xl object-cover" />

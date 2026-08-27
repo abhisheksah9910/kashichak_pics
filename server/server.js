@@ -154,11 +154,32 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 // Solves cross-origin / auth-cookie blocking issues with direct Drive URLs.
 app.get('/api/media/:fileId', async (req, res) => {
   try {
-    const stream = await getFileStream(req.params.fileId);
-    // Cache the media for 1 year (31536000 seconds)
+    const driveResponse = await getFileStream(req.params.fileId, req.headers);
+    
+    // Set status code (e.g., 206 Partial Content or 200 OK)
+    res.status(driveResponse.status);
+    
+    // Forward essential headers for video streaming
+    const headersToForward = [
+      'content-type',
+      'content-length',
+      'content-range',
+      'accept-ranges',
+    ];
+    
+    headersToForward.forEach(header => {
+      if (driveResponse.headers[header]) {
+        res.setHeader(header, driveResponse.headers[header]);
+      }
+    });
+
+    // Cache the media for 1 year
     res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    stream.pipe(res);
+    
+    // Pipe the data stream
+    driveResponse.data.pipe(res);
   } catch (err) {
+    console.error('Media proxy error:', err.message);
     res.status(404).json({ success: false, message: 'Media not found.' });
   }
 });
