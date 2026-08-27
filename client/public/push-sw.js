@@ -13,7 +13,7 @@ self.addEventListener('push', function (event) {
       }
     };
     event.waitUntil(
-      self.registration.showNotification(data.title || 'Apna Kashichak', options)
+      self.registration.showNotification(data.title || 'Kashichak', options)
     );
   }
 });

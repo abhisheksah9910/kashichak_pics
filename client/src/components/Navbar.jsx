@@ -116,7 +116,7 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-2 font-display text-xl font-semibold text-terracotta-700 dark:text-terracotta-300">
           <Landmark className="h-6 w-6" />
-          Apna Kashichak
+          Kashichak
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

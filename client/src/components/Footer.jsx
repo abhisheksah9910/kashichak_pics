@@ -25,7 +25,7 @@ export default function Footer() {
         {/* Brand Section */}
         <Link to="/" className="flex items-center gap-2 font-display text-2xl font-bold text-terracotta-700 dark:text-terracotta-400 mb-4 transition-transform hover:scale-105">
           <MapPin className="h-7 w-7" />
-          Apna Kashichak
+          Kashichak
         </Link>
         <p className="text-base text-ink-950/60 dark:text-terracotta-50/60 max-w-md mb-8">
           Hamara gaon, hamari yaadein. Ek chhoti si koshish gaon ki khoobsurati ko hamesha ke liye sanjone ki.
@@ -77,7 +77,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <p className="text-xs text-ink-950/40 dark:text-terracotta-50/40">
-          © {new Date().getFullYear()} Apna Kashichak. Sabhi adhikar surakshit hain.
+          © {new Date().getFullYear()} Kashichak. Sabhi adhikar surakshit hain.
         </p>
 
       </div>

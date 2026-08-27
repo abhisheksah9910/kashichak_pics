@@ -102,7 +102,7 @@ export default function PlaceDetails() {
   const handleShare = async () => {
     const shareData = {
       title: place.name,
-      text: `Check out memories of ${place.name} on Apna Kashichak!`,
+      text: `Check out memories of ${place.name} on Kashichak!`,
       url: window.location.href,
     };
     if (navigator.share) {

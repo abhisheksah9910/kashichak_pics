@@ -12,14 +12,14 @@ const sendOTPEmail = async (email, name, otp) => {
   await transporter.sendMail({
     from: process.env.EMAIL_FROM,
     to: email,
-    subject: 'Verify your email - Apna Kashichak',
+    subject: 'Verify your email - Kashichak',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 30px;">
-        <h1 style="color: #c2410c;">Apna Kashichak</h1>
+        <h1 style="color: #c2410c;">Kashichak</h1>
 
         <h2>Hello ${name} 👋</h2>
 
-        <p>Thank you for signing up with Apna Kashichak.</p>
+        <p>Thank you for signing up with Kashichak.</p>
 
         <p>Your email verification OTP is:</p>
 
@@ -42,7 +42,47 @@ const sendOTPEmail = async (email, name, otp) => {
 
         <br />
 
-        <p>Regards,<br /><strong>Apna Kashichak Team</strong></p>
+        <p>Regards,<br /><strong>Kashichak Team</strong></p>
+      </div>
+    `,
+  });
+};
+
+const sendPasswordResetEmail = async (email, name, resetUrl) => {
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: 'Reset your password - Kashichak',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 30px;">
+        <h1 style="color: #c2410c;">Kashichak</h1>
+
+        <h2>Hello ${name},</h2>
+
+        <p>You requested a password reset for your Kashichak account.</p>
+
+        <p>Please click the button below to reset your password:</p>
+
+        <a href="${resetUrl}" style="
+          display: inline-block;
+          padding: 10px 20px;
+          margin: 20px 0;
+          background-color: #c2410c;
+          color: white;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: bold;
+        ">
+          Reset Password
+        </a>
+
+        <p>This link will expire in <strong>1 hour</strong>.</p>
+
+        <p>If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
+
+        <br />
+
+        <p>Regards,<br /><strong>Kashichak Team</strong></p>
       </div>
     `,
   });
@@ -50,4 +90,5 @@ const sendOTPEmail = async (email, name, otp) => {
 
 module.exports = {
   sendOTPEmail,
+  sendPasswordResetEmail,
 };

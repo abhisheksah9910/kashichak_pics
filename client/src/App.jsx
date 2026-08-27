@@ -9,6 +9,8 @@ import PlaceDetails from './pages/PlaceDetails';
 import Upload from './pages/Upload';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Profile from './pages/Profile';
 import UserProfile from './pages/UserProfile';
 import AdminDashboard from './pages/AdminDashboard';
@@ -33,6 +35,8 @@ export default function App() {
           <Route path="/upload" element={<Upload />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />

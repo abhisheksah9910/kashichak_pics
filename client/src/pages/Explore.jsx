@@ -30,7 +30,7 @@ export default function Explore() {
         <div>
           <h1 className="font-display text-3xl font-semibold sm:text-4xl">Explore Places</h1>
           <p className="mt-2 text-ink-950/60 dark:text-terracotta-50/60">
-            Discover villages, towns, and landmarks preserved by the Apna Kashichak community.
+            Discover villages, towns, and landmarks preserved by the Kashichak community.
           </p>
         </div>
         <div className="flex overflow-hidden rounded-full border border-terracotta-200 dark:border-terracotta-800 shrink-0">

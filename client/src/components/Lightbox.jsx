@@ -45,7 +45,7 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
     };
 
     const handleShare = async () => {
-        const shareData = { title: memory.caption, text: `Check out this memory on Apna Kashichak!`, url: window.location.href };
+        const shareData = { title: memory.caption, text: `Check out this memory on Kashichak!`, url: window.location.href };
         if (navigator.share) {
             try { await navigator.share(shareData); } catch (err) { console.error(err); }
         } else {
@@ -55,7 +55,7 @@ export default function Lightbox({ memory, currentUser, onClose, onPrev, onNext,
     };
 
     const handleWhatsAppShare = () => {
-        const text = encodeURIComponent(`Check out this memory on Apna Kashichak! ${window.location.href}`);
+        const text = encodeURIComponent(`Check out this memory on Kashichak! ${window.location.href}`);
         window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
     };
 

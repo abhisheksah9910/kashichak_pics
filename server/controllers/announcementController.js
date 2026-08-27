@@ -10,7 +10,7 @@ const getAnnouncement = async (req, res, next) => {
     if (!announcement) {
       // Create a default one if it doesn't exist
       announcement = await Announcement.create({
-        message: 'Welcome to Apna Kashichak!',
+        message: 'Welcome to Kashichak!',
         isActive: false
       });
     }

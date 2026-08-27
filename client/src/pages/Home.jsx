@@ -105,7 +105,7 @@ export default function Home() {
         
         <div className="relative z-10 mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:py-32 flex flex-col justify-center min-h-[350px]">
           <h1 className="font-display text-3xl sm:text-5xl font-bold leading-normal tracking-tight min-h-[120px] sm:min-h-[160px] flex items-center justify-center drop-shadow-xl">
-            <TypewriterText texts={["Welcome to Apna Kashichak", "अपना काशीचक में आपका स्वागत है"]} />
+            <TypewriterText texts={["Welcome to Kashichak", "अपना काशीचक में आपका स्वागत है"]} />
           </h1>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}

@@ -1,7 +1,7 @@
 {
   "name": "apna-kashichak-server",
   "version": "1.0.0",
-  "description": "Apna Kashichak - backend API",
+  "description": "Kashichak - backend API",
   "main": "server.js",
   "type": "commonjs",
   "scripts": {

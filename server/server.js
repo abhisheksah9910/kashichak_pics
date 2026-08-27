@@ -124,7 +124,7 @@ app.use(
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    message: 'Apna Kashichak API is running.',
+    message: 'Kashichak API is running.',
   });
 });
 
@@ -171,5 +171,5 @@ app.use(errorHandler);
 // START SERVER
 // =========================
 app.listen(PORT, () => {
-  console.log(`Apna Kashichak API running on port ${PORT}`);
+  console.log(`Kashichak API running on port ${PORT}`);
 });

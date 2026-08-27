@@ -1,24 +1,42 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { Landmark, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Landmark, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export default function Login() {
-  const { login } = useAuth();
+export default function ResetPassword() {
+  const { token } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const { loadUser } = useAuth();
+  const [passwords, setPasswords] = useState({ password: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (passwords.password !== passwords.confirmPassword) {
+      return toast.error("Passwords don't match!");
+    }
+    if (passwords.password.length < 6) {
+      return toast.error("Password must be at least 6 characters.");
+    }
+
     setLoading(true);
     try {
-      await login(form.email, form.password);
-      toast.success('Welcome back!');
-      navigate(location.state?.from?.pathname || '/');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/reset-password/${token}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwords.password }),
+      });
+      const data = await res.json();
+      
+      if (!res.ok) throw new Error(data.message || 'Something went wrong');
+      
+      localStorage.setItem('token', data.data.token);
+      await loadUser(); // Reload user context since they are now logged in
+      
+      toast.success('Password successfully reset! You are now logged in.');
+      navigate('/');
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -28,19 +46,13 @@ export default function Login() {
 
   return (
     <div className="flex min-h-[calc(100vh-64px)]">
-      {/* Left branding panel — hidden on mobile */}
+      {/* Left branding panel */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-ink-950 p-16 relative overflow-hidden">
-        {/* Background blobs */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
             animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.6, 0.4] }}
             transition={{ duration: 8, repeat: Infinity }}
             className="absolute -top-1/4 -left-1/4 w-2/3 h-2/3 rounded-full bg-terracotta-600/30 blur-[120px]"
-          />
-          <motion.div
-            animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
-            transition={{ duration: 10, repeat: Infinity, delay: 2 }}
-            className="absolute -bottom-1/4 -right-1/4 w-2/3 h-2/3 rounded-full bg-orange-500/20 blur-[150px]"
           />
         </div>
 
@@ -58,11 +70,8 @@ export default function Login() {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <p className="font-display text-4xl font-bold text-white leading-snug">
-              Every place<br />
-              <span className="text-terracotta-400">has a story.</span>
-            </p>
-            <p className="mt-4 text-terracotta-100/60 text-lg">
-              Log in to preserve and explore the memories of your village.
+              Set a new<br />
+              <span className="text-terracotta-400">password.</span>
             </p>
           </motion.div>
         </div>
@@ -82,46 +91,41 @@ export default function Login() {
           transition={{ duration: 0.6 }}
           className="mx-auto w-full max-w-sm"
         >
-          {/* Mobile logo */}
           <Link to="/" className="flex lg:hidden items-center gap-2 mb-10 text-terracotta-700 dark:text-terracotta-300">
             <Landmark className="h-6 w-6" />
             <span className="font-display text-lg font-semibold">Kashichak</span>
           </Link>
 
-          <h1 className="font-display text-3xl font-bold">Welcome back</h1>
+          <h1 className="font-display text-3xl font-bold">Reset password</h1>
           <p className="mt-2 text-ink-950/50 dark:text-terracotta-50/50">
-            Log in to continue your journey.
+            Please enter your new password below.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-10 space-y-5">
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-terracotta-400" />
-              <input
-                type="email"
-                required
-                placeholder="Email address"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="input pl-11"
-              />
-            </div>
-
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-terracotta-400" />
               <input
                 type="password"
                 required
-                placeholder="Password"
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                placeholder="New password (min 6 chars)"
+                value={passwords.password}
+                onChange={(e) => setPasswords({ ...passwords, password: e.target.value })}
                 className="input pl-11"
+                minLength={6}
               />
             </div>
             
-            <div className="flex justify-end">
-              <Link to="/forgot-password" className="text-sm font-semibold text-terracotta-600 hover:underline">
-                Forgot password?
-              </Link>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-terracotta-400" />
+              <input
+                type="password"
+                required
+                placeholder="Confirm new password"
+                value={passwords.confirmPassword}
+                onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+                className="input pl-11"
+                minLength={6}
+              />
             </div>
 
             <button
@@ -129,21 +133,14 @@ export default function Login() {
               disabled={loading}
               className="btn-primary w-full py-3 text-base group"
             >
-              {loading ? 'Logging in…' : (
+              {loading ? 'Saving…' : (
                 <>
-                  Log in
+                  Reset and Log in
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </>
               )}
             </button>
           </form>
-
-          <p className="mt-6 text-center text-sm text-ink-950/50 dark:text-terracotta-50/50">
-            Don't have an account?{' '}
-            <Link to="/signup" className="font-semibold text-terracotta-600 hover:underline">
-              Sign up free
-            </Link>
-          </p>
         </motion.div>
       </div>
     </div>

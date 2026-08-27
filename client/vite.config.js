@@ -9,7 +9,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'Apna Kashichak',
+        name: 'Kashichak',
         short_name: 'ApnaKashichak',
         description: 'Every Place Has a Story. Preserve your village memories.',
         theme_color: '#d95d39',

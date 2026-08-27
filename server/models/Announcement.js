@@ -5,7 +5,7 @@ const announcementSchema = new mongoose.Schema(
     message: {
       type: String,
       required: true,
-      default: 'Welcome to Apna Kashichak!'
+      default: 'Welcome to Kashichak!'
     },
     isActive: {
       type: Boolean,

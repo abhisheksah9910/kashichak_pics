@@ -45,7 +45,7 @@ export default function Signup() {
         <div className="relative z-10">
           <Link to="/" className="flex items-center gap-3 text-white">
             <Landmark className="h-8 w-8 text-terracotta-400" />
-            <span className="font-display text-2xl font-semibold">Apna Kashichak</span>
+            <span className="font-display text-2xl font-semibold">Kashichak</span>
           </Link>
         </div>
 
@@ -67,7 +67,7 @@ export default function Signup() {
 
         <div className="relative z-10">
           <p className="text-xs text-terracotta-50/30">
-            © {new Date().getFullYear()} Apna Kashichak. All rights reserved.
+            © {new Date().getFullYear()} Kashichak. All rights reserved.
           </p>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function Signup() {
           {/* Mobile logo */}
           <Link to="/" className="flex lg:hidden items-center gap-2 mb-10 text-terracotta-700 dark:text-terracotta-300">
             <Landmark className="h-6 w-6" />
-            <span className="font-display text-lg font-semibold">Apna Kashichak</span>
+            <span className="font-display text-lg font-semibold">Kashichak</span>
           </Link>
 
           <h1 className="font-display text-3xl font-bold">Create an account</h1>

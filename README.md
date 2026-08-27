@@ -1,8 +1,8 @@
-# Apna Kashichak
+# Kashichak
 
 > Every place has a story. Every memory belongs somewhere.
 
-Apna Kashichak is a community-driven platform to discover, preserve, and share photos and
+Kashichak is a community-driven platform to discover, preserve, and share photos and
 videos connected to specific places — starting with **Kashichak and nearby areas in
 Bihar**, built on a location hierarchy that scales to any village, town, city, or
 landmark in India.
